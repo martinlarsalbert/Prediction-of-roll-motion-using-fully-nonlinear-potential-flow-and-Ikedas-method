@@ -29,13 +29,9 @@ class install(_install):
             else:
                 raise SystemExit(r'wellp, I tried ¯\__(ツ)__/¯')
 
-            
 
-         cmd = (sys.executable, '-m', 'jupyter', 'labextension', 'install', 'jupyterlab_templates')
-         subprocess.call(cmd)
-         
-         cmd = (sys.executable, '-m', 'jupyter', 'serverextension', 'enable', 'jupyterlab_templates')
-         subprocess.call(cmd)
+        subprocess.run('jupyter', 'labextension', 'install', 'jupyterlab_templates')
+        subprocess.run('jupyter', 'serverextension', 'enable', 'jupyterlab_templates')
 
 try:
     from wheel.bdist_wheel import bdist_wheel as _bdist_wheel

@@ -12,15 +12,15 @@ sql_template = """
 SELECT * from
 %s
 INNER JOIN run
-ON %s.run_id == run.id
+ON %s.run_id = run.id
     INNER JOIN projects
-    ON run.project_number==projects.project_number
+    ON run.project_number=projects.project_number
         INNER JOIN loading_conditions
-        ON (run.loading_condition_id == loading_conditions.id)
+        ON (run.loading_condition_id = loading_conditions.id)
             INNER JOIN models
-            ON run.model_number == models.model_number
+            ON run.model_number = models.model_number
                 INNER JOIN ships
-                ON models.ship_name == ships.name
+                ON models.ship_name = ships.name
         
 """
 
