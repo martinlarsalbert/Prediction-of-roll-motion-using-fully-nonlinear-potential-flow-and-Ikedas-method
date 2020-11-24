@@ -31,7 +31,7 @@ if not pw:
 
 engine = create_engine(r'postgresql://sspauser:' + pw + r'@ais01:5432/mdl')
 
-def load(rolldecay_table_name='rolldecay_direct_improved',sql=None,only_latest_runs=True, limit_score=0.96,
+def load(rolldecay_table_name='rolldecay_quadratic_b',sql=None,only_latest_runs=True, limit_score=0.96,
          include_softmooring=False, exclude_table_name=None):
 
 

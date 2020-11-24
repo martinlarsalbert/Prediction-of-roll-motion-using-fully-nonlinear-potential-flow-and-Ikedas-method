@@ -33,4 +33,4 @@ import rolldecayestimators.symbols as symbols
 import sympy as sp
 
 from sklearn.metrics import r2_score
-import rolldecay.paper_writing as paper_writing
+from src.data import database
