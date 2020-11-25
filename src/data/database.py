@@ -5,6 +5,7 @@ import pandas as pd
 
 from sqlalchemy import create_engine
 from mdldb.mdl_db import MDLDataBase
+from mdldb import tables
 import signal_lab.mdl_to_evaluation
 import os
 
@@ -76,7 +77,25 @@ def get_latest(group):
     s['run_id'] = s.name
     return s
 
-def load_run(db_run, load_temp=True, save_temp=True, save_as_example=False):
+def load_run(db_run:tables.Run, load_temp=True, save_temp=True, save_as_example=False)->pd.DataFrame:
+    """[summary]
+
+    Parameters
+    ----------
+    db_run : tables.Run
+        Run database object
+    load_temp : bool, optional
+        should run be loaded from local copy if it exists?, by default True
+    save_temp : bool, optional
+        should run be saved locally in a temp folder?, by default True
+    save_as_example : bool, optional
+        The run can be saved in an example folder (not so usefull feature), by default False
+
+    Returns
+    -------
+    pd.DataFrame
+        The time series is returned ad Pandas DataFrame
+    """
 
     if save_as_example:
         other_save_directory = os.path.join(rolldecay.data_path,'example_data')
