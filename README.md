@@ -5,6 +5,9 @@ The repository was used for the work conducted for the paper: "Prediction of rol
 ## Note!
 Some of the dependencies and the data used in this repo are unfortunatelly not open source.
 
+## .env
+place a file called *.env* in the root of this repo containing the environmental variable for the database password. Simply add: password="..."
+
 Project Organization
 ------------
 

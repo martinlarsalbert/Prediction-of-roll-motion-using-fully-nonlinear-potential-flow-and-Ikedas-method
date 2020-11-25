@@ -8,6 +8,13 @@ from mdldb.mdl_db import MDLDataBase
 from mdldb import tables
 import signal_lab.mdl_to_evaluation
 import os
+from dotenv import load_dotenv
+dirname = os.path.dirname(__file__)
+base_path = os.path.split(os.path.split(dirname)[0])[0]
+dotenv_path = os.path.join(base_path, '.env')
+assert os.path.exists(dotenv_path)
+load_dotenv(dotenv_path)  # Loading environment variables (where the password is one of them)
+
 
 sql_template = """
 SELECT * from
@@ -28,7 +35,7 @@ ON %s.run_id = run.id
 # Password is retrieved from the environment variable "password"
 pw = os.environ.get('password')
 if not pw:
-    raise ValueError('You need to define environment variable "password" with the password to the mdl database.\n The easiest way is to add: export password="..." to venv/bin/activate')
+    raise ValueError('You need to define environment variable "password" with the password to the mdl database.\n The easiest way is to add a file ".env" in the root of this repo containing: password="..."')
 
 engine = create_engine(r'postgresql://sspauser:' + pw + r'@ais01:5432/mdl')
 
@@ -77,7 +84,7 @@ def get_latest(group):
     s['run_id'] = s.name
     return s
 
-def load_run(db_run:tables.Run, load_temp=True, save_temp=True, save_as_example=False)->pd.DataFrame:
+def load_run(db_run:tables.Run, load_temp=True, save_temp=True, save_as_example=False, prefer_hdf5=True)->pd.DataFrame:
     """[summary]
 
     Parameters
@@ -90,6 +97,8 @@ def load_run(db_run:tables.Run, load_temp=True, save_temp=True, save_as_example=
         should run be saved locally in a temp folder?, by default True
     save_as_example : bool, optional
         The run can be saved in an example folder (not so usefull feature), by default False
+    prefer_hdf5 : bool, optinal
+        If a hdf5 file exist use it (instead of ascii-file which may also be presen),by default True
 
     Returns
     -------
@@ -102,11 +111,16 @@ def load_run(db_run:tables.Run, load_temp=True, save_temp=True, save_as_example=
     else:
         other_save_directory = None
 
-    ascii_file = db_run.load(load_temp=load_temp, save_temp=save_temp, other_save_directory=other_save_directory)
-    df_raw = ascii_file.channels
+    df_raw,units = db_run.load(load_temp=load_temp, save_temp=save_temp, other_save_directory=other_save_directory, prefer_hdf5=prefer_hdf5)
+
 
     df = signal_lab.mdl_to_evaluation.do_transforms(df=df_raw)
     df.rename(columns={'MA/Roll': 'phi'}, inplace=True)
     df.rename(columns={'MA/Pitch': 'theta'}, inplace=True)
+    df.rename(columns={'ma/roll': 'phi'}, inplace=True)
+    df.rename(columns={'ma/pitch': 'theta'}, inplace=True)
 
-    return df
+    units['phi']='rad'
+    units['theta']='rad'
+
+    return df,units

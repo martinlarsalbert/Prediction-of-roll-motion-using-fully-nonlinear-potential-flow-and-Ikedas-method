@@ -34,3 +34,4 @@ import sympy as sp
 
 from sklearn.metrics import r2_score
 from src.data import database
+from mdldb import tables
