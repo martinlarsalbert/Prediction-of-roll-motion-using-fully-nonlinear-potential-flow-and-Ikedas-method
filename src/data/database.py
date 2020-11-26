@@ -5,7 +5,7 @@ import pandas as pd
 
 from sqlalchemy import create_engine
 from mdldb.mdl_db import MDLDataBase
-from mdldb import tables
+import mdldb.run
 import signal_lab.mdl_to_evaluation
 import os
 from dotenv import load_dotenv
@@ -84,12 +84,12 @@ def get_latest(group):
     s['run_id'] = s.name
     return s
 
-def load_run(db_run:tables.Run, load_temp=True, save_temp=True, save_as_example=False, prefer_hdf5=True)->pd.DataFrame:
+def load_run(db_run:mdldb.run.Run, load_temp=True, save_temp=True, save_as_example=False, prefer_hdf5=True)->pd.DataFrame:
     """[summary]
 
     Parameters
     ----------
-    db_run : tables.Run
+    db_run : mdldb.run.Run
         Run database object
     load_temp : bool, optional
         should run be loaded from local copy if it exists?, by default True
@@ -111,16 +111,16 @@ def load_run(db_run:tables.Run, load_temp=True, save_temp=True, save_as_example=
     else:
         other_save_directory = None
 
-    df_raw,units = db_run.load(load_temp=load_temp, save_temp=save_temp, other_save_directory=other_save_directory, prefer_hdf5=prefer_hdf5)
+    db_run.load(load_temp=load_temp, save_temp=save_temp, other_save_directory=other_save_directory, prefer_hdf5=prefer_hdf5)
 
-
-    df = signal_lab.mdl_to_evaluation.do_transforms(df=df_raw)
+    df = signal_lab.mdl_to_evaluation.do_transforms(df=db_run.df)
     df.rename(columns={'MA/Roll': 'phi'}, inplace=True)
     df.rename(columns={'MA/Pitch': 'theta'}, inplace=True)
     df.rename(columns={'ma/roll': 'phi'}, inplace=True)
     df.rename(columns={'ma/pitch': 'theta'}, inplace=True)
+    db_run.df = df
+    
+    db_run.units['phi']='rad'
+    db_run.units['theta']='rad'
 
-    units['phi']='rad'
-    units['theta']='rad'
-
-    return df,units
+    return db_run
