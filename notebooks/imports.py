@@ -16,11 +16,12 @@ pd.set_option("display.max_columns", None)
 import numpy as np
 import os
 import matplotlib.pyplot as plt
+from collections import OrderedDict
 #plt.style.use('paper')
 
 #import data
 import copy
-from mdldb.tables import Run
+from mdldb.run import Run
 
 from sklearn.pipeline import Pipeline
 from rolldecayestimators.transformers import CutTransformer, LowpassFilterDerivatorTransformer, ScaleFactorTransformer, OffsetTransformer
