@@ -33,6 +33,9 @@ from rolldecayestimators.substitute_dynamic_symbols import lambdify
 import rolldecayestimators.symbols as symbols
 import sympy as sp
 
+from sympy.physics.vector.printing import vpprint, vlatex
+from IPython.display import display, Math, Latex
+
 from sklearn.metrics import r2_score
 from src.data import database
 from mdldb import tables

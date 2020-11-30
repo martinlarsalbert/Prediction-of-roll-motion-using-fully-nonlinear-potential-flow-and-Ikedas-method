@@ -29,3 +29,4 @@ pre-commit
 # SSPA
 rolldecay-estimators
 mdldb
+pyscores2
