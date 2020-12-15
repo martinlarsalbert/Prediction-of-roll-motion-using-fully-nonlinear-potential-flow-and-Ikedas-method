@@ -32,6 +32,7 @@ class install(_install):
 
         subprocess.run('jupyter', 'labextension', 'install', 'jupyterlab_templates')
         subprocess.run('jupyter', 'serverextension', 'enable', 'jupyterlab_templates')
+        subprocess.run('nbstripout', '--install')
 
 try:
     from wheel.bdist_wheel import bdist_wheel as _bdist_wheel

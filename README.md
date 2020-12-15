@@ -5,8 +5,12 @@ The repository was used for the work conducted for the paper: "Prediction of rol
 ## Note!
 Some of the dependencies and the data used in this repo are unfortunatelly not open source.
 
+# Setup
 ## .env
 place a file called *.env* in the root of this repo containing the environmental variable for the database password. Simply add: password="..."
+
+## nbstripout
+Use a pre-commit filter called [nbstripout](https://github.com/kynan/nbstripout) to clean the output from the notebooks, if they contain sensitive information.
 
 Project Organization
 ------------
