@@ -1,0 +1,3 @@
+[submodule "reports/ISOPE"]
+	path = reports/ISOPE
+	url = https://github.com/martinlarsalbert/inviscid_CFD_-roll_decay.git
