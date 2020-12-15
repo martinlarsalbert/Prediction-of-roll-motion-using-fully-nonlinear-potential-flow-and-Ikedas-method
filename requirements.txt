@@ -26,6 +26,7 @@ jupyterthemes
 cite2c
 pre-commit
 joblib
+rise
 
 # SSPA
 rolldecay-estimators
