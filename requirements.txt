@@ -32,3 +32,4 @@ rise
 rolldecay-estimators
 mdldb
 pyscores2
+shipflowmotionshelpers

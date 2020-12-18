@@ -39,3 +39,4 @@ from IPython.display import display, Math, Latex
 from sklearn.metrics import r2_score
 from src.data import database
 from mdldb import tables
+import shipflowmotionshelpers.shipflowmotionshelpers as helpers
