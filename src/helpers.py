@@ -10,7 +10,7 @@ from pyscores2.indata import Indata
 import rolldecayestimators
 from rolldecayestimators import lambdas as lambdas
 
-def get_ikeda(indata_file_path:str, output_file_path:str, mdl_meta_data:pd.Series, omega0:float, phi_a:float)->rolldecayestimators.ikeda.Ikeda:
+def get_ikeda(indata_file_path:str, output_file_path:str, mdl_meta_data:pd.Series, omega0:float, phi_a:float, IkedaClass=rolldecayestimators.ikeda.Ikeda)->rolldecayestimators.ikeda.Ikeda:
     """setup an Ikeda class object
 
     Parameters
@@ -56,14 +56,12 @@ def get_ikeda(indata_file_path:str, output_file_path:str, mdl_meta_data:pd.Serie
     BKL_ = BKL*np.ones(len(phi_a))
     BKB_ = BKB*np.ones(len(phi_a))
     
-    ikeda = Ikeda.load_scoresII(V=V, w=w, fi_a=phi_a, indata=indata, output_file=output_file, 
+    ikeda = IkedaClass.load_scoresII(V=V, w=w, fi_a=phi_a, indata=indata, output_file=output_file, 
                                 scale_factor=scale_factor, BKL=BKL_, BKB=BKB_)
-    
-    R = mdl_meta_data.R/scale_factor  
-    ikeda.R = R
-    
-    #ikeda = IkedaR.load_scoresII(V=V, w=w, fi_a=phi_a, indata=indata, output_file=output_file, 
-    #                            scale_factor=scale_factor, BKL=BKL_, BKB=BKB_)
+
+    if not isinstance(ikeda, rolldecayestimators.ikeda.IkedaR):
+        R = mdl_meta_data.R/scale_factor  
+        ikeda.R = R
         
     return ikeda
 
