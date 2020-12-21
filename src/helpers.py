@@ -82,6 +82,9 @@ def calculate_ikeda(ikeda):
 
 def get_estimator_variation(estimator, results, meta_data):
 
+    if not hasattr(estimator,'X_pred_amplitudes'):
+        estimator.calculate_amplitudes_and_damping()
+
     X_amplitudes=estimator.X_pred_amplitudes.copy()
     phi_a=X_amplitudes['phi_a']
     B_e = lambdas.B_e_lambda_cubic(B_1=results['B_1'], B_2=results['B_2'], B_3=results['B_3'], 
@@ -96,6 +99,9 @@ def get_estimator_variation(estimator, results, meta_data):
 
 def get_data_variation(estimator, results, meta_data):
     
+    if not hasattr(estimator,'X_amplitudes'):
+        estimator.calculate_amplitudes_and_damping()
+
     X_amplitudes=estimator.X_amplitudes
     omega0=estimator.omega0
     A_44=results['A_44']
