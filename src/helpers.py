@@ -55,9 +55,10 @@ def get_ikeda(indata_file_path:str, output_file_path:str, mdl_meta_data:pd.Serie
        
     BKL_ = BKL*np.ones(len(phi_a))
     BKB_ = BKB*np.ones(len(phi_a))
-    
+    kg=mdl_meta_data.kg/scale_factor
+
     ikeda = IkedaClass.load_scoresII(V=V, w=w, fi_a=phi_a, indata=indata, output_file=output_file, 
-                                scale_factor=scale_factor, BKL=BKL_, BKB=BKB_)
+                                scale_factor=scale_factor, BKL=BKL_, BKB=BKB_, kg=kg)
 
     if not isinstance(ikeda, rolldecayestimators.ikeda.IkedaR):
         R = mdl_meta_data.R/scale_factor  
