@@ -109,7 +109,9 @@ def get_data_variation(estimator, results, meta_data):
     X_amplitudes=estimator.X_amplitudes
     omega0=estimator.omega0
     A_44=results['A_44']
-    X_amplitudes['B']=X_amplitudes['B_n']*2*omega0*A_44/2
+    zeta = X_amplitudes['zeta_n']
+    X_amplitudes['B']=2*A_44*omega0*zeta
+        
     X_amplitudes['B_hat'] = lambdas.B_hat_lambda(B=X_amplitudes['B'], Disp=meta_data['Volume'], beam=meta_data['beam'], g=meta_data['g'], rho=meta_data['rho'])
     return X_amplitudes
 
