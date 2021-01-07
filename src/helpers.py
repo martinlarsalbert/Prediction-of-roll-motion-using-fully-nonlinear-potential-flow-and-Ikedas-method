@@ -2,6 +2,7 @@
 """
 import pandas as pd
 import numpy as np
+from collections import OrderedDict
 
 from pyscores2.output import OutputFile
 from rolldecayestimators.ikeda import Ikeda, IkedaR
@@ -10,7 +11,7 @@ from pyscores2.indata import Indata
 import rolldecayestimators
 from rolldecayestimators import lambdas as lambdas
 
-def get_ikeda(indata_file_path:str, output_file_path:str, mdl_meta_data:pd.Series, omega0:float, phi_a:float, IkedaClass=rolldecayestimators.ikeda.Ikeda)->rolldecayestimators.ikeda.Ikeda:
+def get_ikeda(indata_file_path:str, output_file_path:str, mdl_meta_data:pd.Series,IkedaClass=rolldecayestimators.ikeda.Ikeda, omega0=None, phi_a=None)->rolldecayestimators.ikeda.Ikeda:
     """setup an Ikeda class object
 
     Parameters
@@ -21,9 +22,9 @@ def get_ikeda(indata_file_path:str, output_file_path:str, mdl_meta_data:pd.Serie
         scores outdata file path
     mdl_meta_data : pd.Series
         meta data from mdl db 
-    omega0 : float or ndarray
+    omega0 : float or ndarray or None (Then it should be specified in the calculation step)
         frequancies (usually natural frequency)
-    phi_a : float or ndarray
+    phi_a : float or ndarray or None (Then it should be specified in the calculation step)
         roll amplitude [rad]
 
     Returns
@@ -39,7 +40,6 @@ def get_ikeda(indata_file_path:str, output_file_path:str, mdl_meta_data:pd.Serie
     indata.open(indataPath=indata_file_path)
     output_file = OutputFile(filePath=output_file_path)
         
-    ## Run Ikeda
     w = omega0
     V = mdl_meta_data.ship_speed*1.852/3.6/np.sqrt(scale_factor)
     
@@ -52,14 +52,13 @@ def get_ikeda(indata_file_path:str, output_file_path:str, mdl_meta_data:pd.Serie
         BKB = 0
     else:
         BKB=mdl_meta_data.BKB/scale_factor
-       
-    BKL_ = BKL*np.ones(len(phi_a))
-    BKB_ = BKB*np.ones(len(phi_a))
+    
+    
     kg=mdl_meta_data.kg/scale_factor
-    S_f=mdl_meta_data.S/(scale_factor**2)
+    #S_f=mdl_meta_data.S/(scale_factor**2)
 
     ikeda = IkedaClass.load_scoresII(V=V, w=w, fi_a=phi_a, indata=indata, output_file=output_file, 
-                                scale_factor=scale_factor, BKL=BKL_, BKB=BKB_, kg=kg, S_f=S_f)
+                                scale_factor=scale_factor, BKL=BKL, BKB=BKB, kg=kg)
 
     if not isinstance(ikeda, rolldecayestimators.ikeda.IkedaR):
         R = mdl_meta_data.R/scale_factor  
@@ -67,18 +66,24 @@ def get_ikeda(indata_file_path:str, output_file_path:str, mdl_meta_data:pd.Serie
         
     return ikeda
 
-def calculate_ikeda(ikeda):
+def calculate_ikeda(ikeda:rolldecayestimators.ikeda.Ikeda, omega0=None, phi_a=None)->pd.DataFrame:
+    """
+    Parameters
+    ----------
+    ikeda : rolldecayestimators.ikeda.Ikeda
+        [description]
+    omega0 : float or ndarray or None (if it has already been defined)
+        frequancies (usually natural frequency)
+    phi_a : float or ndarray or None (if it has already been defined)
+        roll amplitude [rad]
 
-    output = pd.DataFrame()
-    output['B_44_hat']   = ikeda.calculate_B44()
-    output['B_W0_hat']   = float(ikeda.calculate_B_W0())
-    output['B_W_hat']    = float(ikeda.calculate_B_W())
-    output['B_F_hat']    = ikeda.calculate_B_F()
-    output['B_E_hat']    = ikeda.calculate_B_E()
-    output['B_BK_hat']   = ikeda.calculate_B_BK()
-    output['B_L_hat']    = float(ikeda.calculate_B_L())
-    output['Bw_div_Bw0'] = float(ikeda.calculate_Bw_div_Bw0())
-    return output
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame with ikeda damping
+    """
+    raise ValueError('This method has been depricated')
+    
 
 def get_estimator_variation(estimator, results, meta_data):
 
