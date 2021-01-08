@@ -40,3 +40,4 @@ from sklearn.metrics import r2_score
 from src.data import database
 from mdldb import tables
 import shipflowmotionshelpers.shipflowmotionshelpers as helpers
+import src.visualization.visualize as visualize
