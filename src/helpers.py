@@ -10,6 +10,8 @@ from pyscores2.runScores2 import Calculation
 from pyscores2.indata import Indata
 import rolldecayestimators
 from rolldecayestimators import lambdas as lambdas
+from rolldecayestimators import ikeda_speed
+from rolldecayestimators.ikeda_naked import eddy_sections
 
 def get_ikeda(indata_file_path:str, output_file_path:str, mdl_meta_data:pd.Series,IkedaClass=rolldecayestimators.ikeda.Ikeda, omega0=None, phi_a=None)->rolldecayestimators.ikeda.Ikeda:
     """setup an Ikeda class object
@@ -164,3 +166,27 @@ def hatify(df:pd.DataFrame, Disp:float, beam:float, g:float, rho:float)-> pd.Dat
         new_df[hat_key] = lambdas.B_to_hat_lambda(B=df[key], Disp=Disp, beam=beam, g=g, rho=rho)
 
     return new_df
+
+def calculate_lewis(row):
+    B_s = row.B
+    T_s = row.d
+    S_s = row.sigma*B_s*T_s
+    return ikeda_speed.calculate_sectional_lewis(B_s=B_s, T_s=T_s, S_s=S_s)
+
+def calculate_B_star_hat(parameters, g=9.81, rho=1000, **kwargs):
+    
+    a, a_1, a_3, sigma_s, H = calculate_lewis(parameters)
+    
+    OG=parameters['OG/d']*parameters.d
+    R = parameters.R 
+        
+    w = lambdas.omega_from_hat(beam=parameters.B, g=g, omega_hat=parameters.w_hat)
+    B_E0_s = eddy_sections(bwl=parameters.B, a_1=a_1, a_3=a_3, sigma=sigma_s, H0=H, Ts=parameters.d,
+             OG=OG, R=R, wE=w, fi_a=parameters.phi_a, ra=rho)
+    B_E0 = B_E0_s*parameters.L
+    
+    Disp = parameters.volume
+    B_E0_hat = lambdas.B_to_hat_lambda(B=B_E0, Disp=Disp, beam=parameters.B, g=g, rho=rho)
+    B_E0_star_hat = B_E0_hat*3*np.pi/8
+    
+    return B_E0_star_hat[0][0]
