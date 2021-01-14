@@ -2,6 +2,7 @@
 """
 import pandas as pd
 import numpy as np
+from numpy import pi
 from collections import OrderedDict
 
 from pyscores2.output import OutputFile
@@ -12,6 +13,7 @@ import rolldecayestimators
 from rolldecayestimators import lambdas as lambdas
 from rolldecayestimators import ikeda_speed
 from rolldecayestimators.ikeda_naked import eddy_sections
+import rolldecayestimators.ikeda_naked as ikeda_naked
 
 def get_ikeda(indata_file_path:str, output_file_path:str, mdl_meta_data:pd.Series,IkedaClass=rolldecayestimators.ikeda.Ikeda, omega0=None, phi_a=None)->rolldecayestimators.ikeda.Ikeda:
     """setup an Ikeda class object
@@ -167,13 +169,35 @@ def hatify(df:pd.DataFrame, Disp:float, beam:float, g:float, rho:float)-> pd.Dat
 
     return new_df
 
-def calculate_lewis(row):
+def calculate_lewis(row:pd.Series):
+    """
+    Lewis form approximation' is obtained.
+    Given the section's area, S_s, beam B and draught T, the constants a, a a_3 are uniquely defined
+    by von Kerczek and Tuck18 as:
+
+    Parameters
+    ----------
+    row : pd.Series
+        Must have: row['B], row['d'], row['sigma']
+        B : array_like
+            Sectional beams [m]
+        d : array_like
+            Sectional draughts [m]
+        sigma : array_like
+            area coeff [-]
+    Returns
+    -------
+    a, a_1, a_3, sigma_s, H
+        sectional lewis coefficients.
+
+    """
     B_s = row.B
     T_s = row.d
     S_s = row.sigma*B_s*T_s
     return ikeda_speed.calculate_sectional_lewis(B_s=B_s, T_s=T_s, S_s=S_s)
 
-def calculate_B_star_hat(parameters, g=9.81, rho=1000, **kwargs):
+
+def calculate_B_hat(parameters, g=9.81, rho=1000, **kwargs):
     
     a, a_1, a_3, sigma_s, H = calculate_lewis(parameters)
     
@@ -181,12 +205,35 @@ def calculate_B_star_hat(parameters, g=9.81, rho=1000, **kwargs):
     R = parameters.R 
         
     w = lambdas.omega_from_hat(beam=parameters.B, g=g, omega_hat=parameters.w_hat)
-    B_E0_s = eddy_sections(bwl=parameters.B, a_1=a_1, a_3=a_3, sigma=sigma_s, H0=H, Ts=parameters.d,
-             OG=OG, R=R, wE=w, fi_a=parameters.phi_a, ra=rho)
-    B_E0 = B_E0_s*parameters.L
+    #B_E0_s = eddy_sections(bwl=parameters.B, a_1=a_1, a_3=a_3, sigma=sigma_s, H0=H, Ts=parameters.d,
+    #         OG=OG, R=R, wE=w, fi_a=parameters.phi_a, ra=rho)
+    #B_E0 = B_E0_s*parameters.L
     
-    Disp = parameters.volume
-    B_E0_hat = lambdas.B_to_hat_lambda(B=B_E0, Disp=Disp, beam=parameters.B, g=g, rho=rho)
+    #Disp = parameters.volume
+    #B_E0_hat = lambdas.B_to_hat_lambda(B=B_E0, Disp=Disp, beam=parameters.B, g=g, rho=rho)
+    #B_E0_star_hat = B_E0_hat*3*np.pi/8
+    
+    L = parameters.L
+    phi_a=parameters.phi_a
+    d = parameters.d
+    Disp = parameters.volume 
+    B = parameters.B
+    omega_hat=parameters.w_hat
+
+    C_r = ikeda_naked.calculate_C_r(bwl=parameters.B, a_1=a_1, a_3=a_3, sigma=sigma_s, H0=H, d=parameters.d,OG=OG, R=R, ra=rho)
+    B_E0_hat = 4*L*d**4*omega_hat*phi_a/(3*pi*Disp*B**2)*C_r    
+    
+    #B_E0_hat*=(1 + 0.5 + 10*R/B/phi_a + 1000*(R/B)**2)  # Faking...
+    
+    return B_E0_hat
+
+
+def calculate_B_star_hat(parameters, g=9.81, rho=1000, **kwargs):
+    
+    B = parameters.B
+    R = parameters.R 
+
+    B_E0_hat = calculate_B_hat(parameters=parameters, g=g, rho=rho, **kwargs)   
     B_E0_star_hat = B_E0_hat*3*np.pi/8
     
-    return B_E0_star_hat[0][0]
+    return B_E0_star_hat
