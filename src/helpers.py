@@ -237,3 +237,16 @@ def calculate_B_star_hat(parameters, g=9.81, rho=1000, **kwargs):
     B_E0_star_hat = B_E0_hat*3*np.pi/8
     
     return B_E0_star_hat
+
+def estimate_sigma(b,t,R):
+    
+    A_b = R**2 - R**2*np.pi/4       
+    A = b*t - A_b
+    sigma = A/(b*t)
+    
+    return sigma
+
+def estimate_bilge_radius(B,d,sigma,**kwargs):
+    A = sigma*B*d  
+    r = np.sqrt((B*d-A)/(1-np.pi/4))
+    return r
