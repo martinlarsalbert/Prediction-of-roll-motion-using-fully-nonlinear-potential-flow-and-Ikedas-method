@@ -18,6 +18,7 @@ import os
 import matplotlib.pyplot as plt
 from collections import OrderedDict
 #plt.style.use('paper')
+from reports.paper_writing import save_fig
 
 #import data
 import copy
