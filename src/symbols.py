@@ -58,4 +58,14 @@ B_E_HAT = B_E_hat = ss.Symbol(name='B_E_HAT', description='Eddy roll damping', u
 B_BK_HAT = B_BK_hat = ss.Symbol(name='B_BK_HAT', description='Bilge keel roll damping', unit='-')
 B_L_HAT = B_L_hat = ss.Symbol(name='B_L_HAT', description='Hull lift roll damping', unit='-')
 
+## Analytical
+zeta = sp.symbols('zeta')
+y = me.dynamicsymbols('y')
+y0 = me.dynamicsymbols('y0')
+y0_dot = y0.diff()
+y0_dotdot = y0_dot.diff()
+D = sp.symbols('D')
 
+phi_0 = me.dynamicsymbols('phi_0')
+phi_0_dot = phi_0.diff()
+phi_0_dotdot = phi_0_dot.diff()
