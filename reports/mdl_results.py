@@ -1,5 +1,6 @@
 import pandas as pd
 from src.data import database
+import numpy as np
 
 def load():
     db = database.get_db()
@@ -22,7 +23,8 @@ def load():
 
     df_rolldecays['ship_speed'].fillna(0, inplace=True)
     
-    df_rolldecays=df_rolldecays.loc[[21338,21340,]].copy()
+    df_rolldecays=df_rolldecays.loc[[21337,21338,21340,]].copy()
+    df_rolldecays['paper_name'] = np.arange(len(df_rolldecays)) + 1
 
     return df_rolldecays
 

@@ -58,6 +58,16 @@ B_E_HAT = B_E_hat = ss.Symbol(name='B_E_HAT', description='Eddy roll damping', u
 B_BK_HAT = B_BK_hat = ss.Symbol(name='B_BK_HAT', description='Bilge keel roll damping', unit='-')
 B_L_HAT = B_L_hat = ss.Symbol(name='B_L_HAT', description='Hull lift roll damping', unit='-')
 
+B_1 = ss.Symbol(name='B_1',description='Linear damping coefficient',unit='Nm/(rad/s)')  # Natural roll frequency
+B_2 = ss.Symbol(name='B_2',description='Quadratic damping coefficient',unit='Nm/(rad/s**2')  # Natural roll frequency
+B_3 = ss.Symbol(name='B_3',description='Cubic damping coefficient',unit='Nm/(rad/s)**3')  # Natural roll frequency
+
+C = ss.Symbol(name='C', description='General stiffness coefficient', unit=r'Nm/rad')  # Introducing a helper coefficient C
+
+C_1 = ss.Symbol(name='C_1', description='Linear stiffness coefficient', unit=r'Nm/rad')
+C_3 = ss.Symbol(name='C_3',description='Stiffness coefficient', unit=r'Nm/rad**3')
+C_5 = ss.Symbol(name='C_5',description='Stiffness coefficient', unit=r'Nm/rad**5')
+
 ## Analytical
 zeta = sp.symbols('zeta')
 y = me.dynamicsymbols('y')
