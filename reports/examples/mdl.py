@@ -1,6 +1,7 @@
 import joblib
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 from reports import mdl_results
 from rolldecayestimators import logarithmic_decrement
@@ -96,4 +97,20 @@ def analyze_amplitude(model):
     df_amplitudes.dropna(inplace=True, subset=['B'])
 
     return df_amplitudes
+
+def plot_amplitudes(df_amplitudes, paper_name, source='model test', ax=None, **kwargs):
+    
+    if ax is None:
+        fig,ax=plt.subplots()
+    
+    df_amplitudes.sort_values(by='phi_a', inplace=True)
+    df_amplitudes['phi_a_deg'] = np.rad2deg(df_amplitudes['phi_a'])
+    
+    label='Run %i: %s' % (paper_name, source)
+    
+    df_amplitudes.plot(x='phi_a_deg', y='B', label=label, style='.', alpha=0.5, ax=ax, **kwargs)
+    color=ax.get_lines()[-1].get_color()
+    label='Run %i: model' % paper_name
+    df_amplitudes.plot(x='phi_a_deg', y='B_model', label=label, color=color, style='-', ax=ax)
+    ax.grid(True)
     
