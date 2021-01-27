@@ -50,8 +50,11 @@ def gather_results(models):
         results = model.result_for_database(meta_data=meta_data)
         results = pd.Series(results, name=id)
         results['paper_name'] = row.paper_name
+        results['id'] = row.name
         df_results = df_results.append(results)
     df_results = df_results.astype(float)
+    df_results['id'] = df_results['id'].astype(int)
+    df_results['paper_name'] = df_results['paper_name'].astype(int)
 
     return df_results
 
@@ -113,4 +116,21 @@ def plot_amplitudes(df_amplitudes, paper_name, source='model test', ax=None, **k
     label='Run %i: model' % paper_name
     df_amplitudes.plot(x='phi_a_deg', y='B_model', label=label, color=color, style='-', ax=ax)
     ax.grid(True)
+
+def show(amplitudes, df_results, ylim=None):
+    
+    ## Plotting:
+    fig,ax=plt.subplots()
+    for id,row in df_results.iterrows(): 
+        df_amplitudes = amplitudes[id].copy()
+        plot_amplitudes(df_amplitudes=df_amplitudes, paper_name = row.paper_name, ax=ax)
+
+    y_lim_motions = list(ax.get_ylim())
+    y_lim_motions[0]=0
+    y_lim_motions[1]*=1.05
+    ax.set_ylim(y_lim_motions)
+    ax.grid(True)
+
+    if not ylim is None:
+        ax.set_ylim(ylim)
     
