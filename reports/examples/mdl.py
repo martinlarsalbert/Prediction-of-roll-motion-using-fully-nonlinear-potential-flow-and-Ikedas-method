@@ -19,7 +19,8 @@ def get_models_speed():
     return _get_models(df=df_rolldecays)
 
 def get_models():
-    return _get_models(df=mdl_results.df_rolldecays)
+    df = mdl_results.df_rolldecays
+    return _get_models(df=df)
 
 def _get_models(df):
         
@@ -53,21 +54,26 @@ def gather_results(models):
 
     return df_results
 
-def analyze_amplitudes(models, df_results):
+def analyze_amplitudes(models):
     amplitudes = {}
     for id,model in models.items():
-        results = df_results.loc[id]
-        df_amplitudes = analyze_amplitude(model=model, results=results)
+        
+        AttributeError
+        try:
+            df_amplitudes = analyze_amplitude(model=model)
+        except AttributeError:
+            raise ValueError(id)
+        
         amplitudes[id] = df_amplitudes
 
     return amplitudes
 
-def analyze_amplitude(model, results):
+def analyze_amplitude(model):
     
     #df_max = logarithmic_decrement.find_peaks(model.X)
     df_max = measure.get_peaks(model.X)
     
-
+    results = model.results
     ## Logartithmic decrement
     df_amplitudes = df_max.copy()
     df_decrements = logarithmic_decrement.calculate_decrements(df_amplitudes=df_amplitudes)
@@ -76,16 +82,18 @@ def analyze_amplitude(model, results):
                                                            A_44=results['A_44'], omega0=results['omega0'])
     df_amplitudes['phi_a'] = logarithmic_decrement.estimate_amplitude(phi=df_amplitudes['phi'])
     
-    omega0 = results.omega0
+    omega0 = results['omega0']
     df_amplitudes['B_model'] = lambdas.B_e_lambda_cubic(B_1=results['B_1'], B_2=results['B_2'], 
                                                     B_3=results['B_3'],
                             omega0=omega0, phi_a=df_amplitudes['phi_a'])
+
+    df_amplitudes['B_model'] = df_amplitudes['B_model'].astype(float)
 
     t = np.array(df_amplitudes.index)
     df_amplitudes['T'] = np.roll(t,-2) - t
     df_amplitudes['omega0'] = 2*np.pi/df_amplitudes['T']
     
-    df_amplitudes.dropna(inplace=True)
+    df_amplitudes.dropna(inplace=True, subset=['B'])
 
     return df_amplitudes
     
