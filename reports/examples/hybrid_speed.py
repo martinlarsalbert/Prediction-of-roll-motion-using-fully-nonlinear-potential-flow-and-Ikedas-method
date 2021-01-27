@@ -50,7 +50,7 @@ def show_time(models_mdl, models_motions):
     X_pred['phi_deg'] = np.rad2deg(X_pred['phi'])
 
     X.plot(y='phi_deg', label='Run %i: model test' % row.paper_name, ax=ax)
-    X_pred.plot(y='phi_deg', label='Run %i: Hybrid' % row.paper_name, ax=ax)
+    X_pred.plot(y='phi_deg', style='--', label='Run %i: Hybrid' % row.paper_name, ax=ax)
     ax.grid(True)
     ax.set_xlabel(r'Time [s]')
     ax.set_ylabel(r'$\phi$ $[deg]$');
