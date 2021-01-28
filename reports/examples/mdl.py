@@ -107,14 +107,16 @@ def plot_amplitudes(df_amplitudes, paper_name, source='model test', ax=None, **k
         fig,ax=plt.subplots()
     
     df_amplitudes.sort_values(by='phi_a', inplace=True)
-    df_amplitudes['phi_a_deg'] = np.rad2deg(df_amplitudes['phi_a'])
+    
+    pretty = r'$\phi_a$'
+    df_amplitudes[pretty] = np.rad2deg(df_amplitudes['phi_a'])
     
     label='Run %i: %s' % (paper_name, source)
     
-    df_amplitudes.plot(x='phi_a_deg', y='B', label=label, style='.', alpha=0.5, ax=ax, **kwargs)
+    df_amplitudes.plot(x=pretty, y='B', label=label, style='.', alpha=0.5, ax=ax, **kwargs)
     color=ax.get_lines()[-1].get_color()
     label='Run %i: model' % paper_name
-    df_amplitudes.plot(x='phi_a_deg', y='B_model', label=label, color=color, style='-', ax=ax)
+    df_amplitudes.plot(x=pretty, y='B_model', label=label, color=color, style='-', ax=ax)
     ax.grid(True)
 
 def show(amplitudes, df_results, ylim=None):
