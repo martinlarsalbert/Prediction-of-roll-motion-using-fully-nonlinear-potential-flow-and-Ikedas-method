@@ -2,7 +2,7 @@ import pandas as pd
 from src.helpers import calculate_lewis
 from rolldecayestimators import ikeda_naked
 from reports import mdl_results    
-
+from src.df_to_latex import LateXTable
 
 def get():
 
@@ -65,5 +65,6 @@ def show():
 
     }
     section_table.rename(columns=rename, inplace=True)
-    return section_table
+    lt = LateXTable(section_table)
+    return lt
 

@@ -11,3 +11,4 @@ if not os.path.exists(build_directory):
     os.mkdir(build_directory)
 
 convert_notebook_to_latex(notebook_path=notebook_path, build_directory=build_directory)
+

@@ -1,4 +1,6 @@
 import pandas as pd
+from src.df_to_latex import LateXTable
+
 
 def show():
     
@@ -36,5 +38,7 @@ def show():
 
     }
     section_table.rename(columns=rename, inplace=True)
-    
-    return section_table
+
+    lt = LateXTable(section_table)
+
+    return lt

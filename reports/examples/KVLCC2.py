@@ -2,6 +2,7 @@
 import pandas as pd
 
 import shipflowmotionshelpers.shipflowmotionshelpers as helpers
+from src.df_to_latex import LateXTable
 
 def show():
 
@@ -26,4 +27,5 @@ def show():
     'tf',
     ]
     table_parameters = pd.DataFrame(parameters[interesting]).transpose()
-    return table_parameters
+    lt = LateXTable(table_parameters)
+    return lt
