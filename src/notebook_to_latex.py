@@ -7,7 +7,7 @@ import nbformat
 from nbconvert import LatexExporter
 from nbconvert.writers import FilesWriter
 import nbconvert.preprocessors.extractoutput
-from nbconvert.preprocessors import TagRemovePreprocessor
+from nbconvert.preprocessors import TagRemovePreprocessor, Preprocessor
 import src.bibpreprocessor
 from traitlets.config import Config
 import os
@@ -19,7 +19,9 @@ from collections import OrderedDict
 # Import the RST exproter
 from nbconvert import RSTExporter
 
-def convert_notebook_to_latex(notebook_path:str, build_directory:str):
+class FigureRenameError(Exception): pass
+
+def convert_notebook_to_latex(notebook_path:str, build_directory:str, save_main=True):
 
     _,notebook_file_name = os.path.split(notebook_path)
     notebook_name,_ = os.path.splitext(notebook_file_name)
@@ -31,14 +33,22 @@ def convert_notebook_to_latex(notebook_path:str, build_directory:str):
     #path = os.path.split(os.path.abspath(__file__))[0]
     c = Config()
     # Employ nbconvert.writers.FilesWriter to write the markdown file 
-    c.FilesWriter.build_directory = build_directory
+    
+    if not os.path.exists(build_directory):
+        os.mkdir(build_directory)
+
+    figure_directory = os.path.join(build_directory,'figures')
+    if not os.path.exists(figure_directory):
+        os.mkdir(figure_directory)
+
+    c.FilesWriter.build_directory = figure_directory  # Only figures!!
 
     # Configure our tag removal
     c.TagRemovePreprocessor.remove_cell_tags = ("remove_cell",)
     c.TagRemovePreprocessor.remove_all_outputs_tags = ('remove_output',)
     c.TagRemovePreprocessor.remove_input_tags = ('remove_input',)
     #c.LatexExporter.preprocessors = [TagRemovePreprocessor,'src.bibpreprocessor.BibTexPreprocessor']
-    c.LatexExporter.preprocessors = [TagRemovePreprocessor]
+    c.LatexExporter.preprocessors = [TagRemovePreprocessor, FigureName]
 
     # 2. Instantiate the exporter. We use the `basic` template for now; we'll get into more details
     # later about how to customize the exporter further.
@@ -58,9 +68,51 @@ def convert_notebook_to_latex(notebook_path:str, build_directory:str):
     fw.write(body, resources, notebook_name=notebook_name)
     
     # Creata a tree structure instead:
-    tree_writer(body=body, build_directory=build_directory)
-    
-def tree_writer(body:str, build_directory:str):
+    tree_writer(body=body, build_directory=build_directory, save_main=save_main)
+
+
+class FigureName(Preprocessor):
+    """Give names to figures"""
+
+    def preprocess(self, nb, resources):
+        #self.log.info("I'll keep only cells from %d to %d", self.start, self.end)
+        #nb.cells = nb.cells[self.start:self.end]
+        
+        for cell_id, cell in enumerate(nb['cells']):
+
+            meta_data = cell['metadata']
+            if 'figure' in meta_data:
+
+                if 'outputs' in cell:
+                    outputs = cell['outputs']
+                    output_id = 0
+                    output = outputs[output_id]
+                    output_meta_data = output['metadata']
+                    filenames = output_meta_data['filenames']
+
+                    output_name = 'output_%i_%i' % (cell_id, output_id)
+                    for key, value in filenames.items():
+                        if output_name in value:
+
+                            figure = meta_data['figure']
+                            if not 'name' in figure:
+                                raise FigureRenameError('Figure in cell %i must have a name' % cell_id)
+
+                            # Rename to "figure":
+                            new_figure_name = value.replace(output_name, figure['name'])
+                            
+                            # Meta data:
+                            nb['cells'][cell_id]['outputs'][output_id]['metadata']['filenames'][key] = new_figure_name       
+
+                            # resources:
+                            resources['outputs'][new_figure_name] = resources['outputs'].pop(value)
+                            
+                    a = 1
+        
+        return nb, resources
+
+
+def tree_writer(body:str, build_directory:str, save_main=True):
     """Splitting the generated LaTex document into sub files:
     
     * main.tex
@@ -75,9 +127,13 @@ def tree_writer(body:str, build_directory:str):
 
     build_directory : str
         Where should the tree be placed
+
+    save_main : bool
+        generate a main.tex with all subsections.
     """
 
     body = latex_cleaner(body)
+    body = change_figure_paths(body=body, build_directory=build_directory)
 
     pre, document, end = split_parts(body=body)
     sections = splitter_section(document=document)
@@ -102,10 +158,11 @@ def tree_writer(body:str, build_directory:str):
 
     main_file_name = 'main.tex'
     main_file_path = os.path.join(build_directory, main_file_name)
-    with open(main_file_path, mode='w') as file:
-        file.write(main)
+    if save_main:
+        with open(main_file_path, mode='w') as file:
+            file.write(main)
 
-def latex_cleaner(body):
+def latex_cleaner(body:str):
 
     ## Clean equation:
     body = re.sub(r'\$\\displaystyle\W*\\begin{equation}',r'\\begin{equation}', body)
@@ -113,8 +170,27 @@ def latex_cleaner(body):
     
     return body
 
+def change_figure_paths(body:str, build_directory:str, figure_directory_name='figures'):
+    """The figures are now in a subfolder, 
+    so the paths need to be changed.
 
-def split_parts(body):
+    Parameters
+    ----------
+    body : str
+    """
+    figure_directory = os.path.join(build_directory,figure_directory_name)
+    for file in os.listdir(figure_directory):
+        _,ext = os.path.splitext(file)
+        if ext=='.pdf' or ext=='.png':
+            new_path =r'%s/%s' % (figure_directory_name,file)
+            body = body.replace(file, new_path)
+
+    return body
+
+
+
+
+def split_parts(body:str):
     """Split into:
     * Pre
     * Document
