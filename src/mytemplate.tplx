@@ -1,11 +1,5 @@
 ((*- extends 'article.tplx' -*))
 
-((* block bibliography *))
-\bibliographystyle{unsrt}
-\bibliography{references}
-((* endblock bibliography *))
-
-
 ((*- block data_pdf -*))
 ((*- if 'application/pdf' in output.metadata.filenames: -*))
     ((*- if cell.metadata.widefigure: -*))

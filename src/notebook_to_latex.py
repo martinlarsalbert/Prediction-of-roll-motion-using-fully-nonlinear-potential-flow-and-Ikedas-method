@@ -9,6 +9,7 @@ from nbconvert.writers import FilesWriter
 import nbconvert.preprocessors.extractoutput
 from nbconvert.preprocessors import TagRemovePreprocessor, Preprocessor
 import src.bibpreprocessor
+from src.itemize_preprocessor import ItemizePreprocessor
 from traitlets.config import Config
 import os
 import shutil
@@ -51,7 +52,7 @@ def convert_notebook_to_latex(notebook_path:str, build_directory:str, save_main=
     c.TagRemovePreprocessor.remove_all_outputs_tags = ('remove_output',)
     c.TagRemovePreprocessor.remove_input_tags = ('remove_input',)
     #c.LatexExporter.preprocessors = [TagRemovePreprocessor,'src.bibpreprocessor.BibTexPreprocessor']
-    c.LatexExporter.preprocessors = [TagRemovePreprocessor, FigureName, src.bibpreprocessor.BibTexPreprocessor]
+    c.LatexExporter.preprocessors = [TagRemovePreprocessor, FigureName, src.bibpreprocessor.BibTexPreprocessor, ItemizePreprocessor]
 
     # 2. Instantiate the exporter. We use the `basic` template for now; we'll get into more details
     # later about how to customize the exporter further.
@@ -191,6 +192,8 @@ def clean_links(body:str):
     """
     
     return re.sub(r"\\href\{.*.ipynb[^}]*}{[^}]+}",'',body)
+
+
 
 def change_figure_paths(body:str, build_directory:str, figure_directory_name='figures'):
     """The figures are now in a subfolder, 

@@ -65,6 +65,6 @@ def show():
 
     }
     section_table.rename(columns=rename, inplace=True)
-    lt = LateXTable(section_table.round(decimals=4))
+    lt = LateXTable(section_table.round(decimals=4), caption='KVLCC2 section table', label='kvlcc2_section_table')
     return lt
 

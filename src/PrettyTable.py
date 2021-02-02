@@ -4,8 +4,11 @@ class PrettyTable(list):
     """ Overridden list class which takes a 2-dimensional list of 
         the form [[1,2,3],[4,5,6]], and renders HTML and LaTeX Table in 
         IPython Notebook. For LaTeX export two styles can be chosen."""
-    def __init__(self, initlist=[], extra_header=None, print_latex_longtable=True):
+    def __init__(self, initlist=[], extra_header=None, print_latex_longtable=True, caption='Caption', label='label'):
         self.print_latex_longtable = print_latex_longtable
+        self.caption=caption
+        self.label=label
+        
         if extra_header is not None:
             if len(initlist[0]) != len(extra_header):
                 raise ValueError("Header list must have same length as data has columns.")
@@ -13,13 +16,54 @@ class PrettyTable(list):
         super(PrettyTable, self).__init__(initlist)
     
     def latex_table_tabular(self):
-        latex = ["\\begin{tabular}"]
-        latex.append("{"+"|".join((["l"]*len(self[0])))+"}\n")
-        for row in self:
+
+        """Produces something like:
+
+        \begin{table}[H]
+        \small
+        \center
+        \caption{KVLCC2 sections}
+        \label{tab:kvlcc2_sections}
+            \begin{tabular}{llllllll}
+        \toprule\addlinespace
+        $x$ & $beam$ & $T_s$ & $\sigma$ & $\frac{OG}{d}$ & $R_b$ & $a_1$ & $a_3$\\
+        \midrule
+        -0.0808 & 0.1712 & 0.0294 & 0.594 & 1.1 & 0.0976 & 0.5341 & 0.0935\\
+        4.7901 & 0.084 & 0.2379 & 0.4708 & 0.136 & 0.222 & -0.7722 & 0.103\\
+        \bottomrule
+        \end{tabular}
+        \end{table}
+
+        Returns
+        -------
+        LaTeX
+        """
+
+        latex = ["""
+\\begin{table}[H]
+\\small
+\\center
+\\caption{%s}
+\\label{tab:%s}
+\\begin{tabular}""" % (self.caption, self.label)]
+     
+        latex.append("{"+"".join((["l"]*len(self[0])))+"}\n")
+        latex.append("\\toprule\\addlinespace")
+        for i,row in enumerate(self):
             latex.append(" & ".join(map(format, row)))
             latex.append("\\\\ \n")
-        latex.append("\\end{tabular}")
+            if i==0:
+                latex.append("\\midrule")
+        
+        
+        latex.append("""
+\\bottomrule
+\\end{tabular}
+\\end{table}""")
+
         return ''.join(latex)
+    
+    
     def latex_longtable(self):
         latex = ["\\begin{longtable}[c]{@{}"]
         latex.append("".join((["l"]*len(self[0]))))
@@ -34,6 +78,8 @@ class PrettyTable(list):
                 first = False
         latex.append("\\bottomrule \n \\end{longtable}")
         return ''.join(latex)
+        
+    
     def _repr_html_(self):
         html = ["<table>"]
         for row in self:

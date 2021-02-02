@@ -27,5 +27,5 @@ def show():
     'tf',
     ]
     table_parameters = pd.DataFrame(parameters[interesting]).transpose()
-    lt = LateXTable(table_parameters)
+    lt = LateXTable(table_parameters, caption='KVLCC2 model data', label='kvlcc2_model_data')
     return lt

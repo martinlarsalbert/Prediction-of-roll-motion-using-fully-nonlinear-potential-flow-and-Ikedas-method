@@ -103,7 +103,7 @@ class BibTexPreprocessor(Preprocessor):
     def create_bibfile(self, filename):
         if not os.path.exists(os.path.dirname(filename)):
             os.makedirs(os.path.dirname(filename))
-        with open(filename, "w") as f:
+        with open(filename, "w", encoding='utf8') as f:
             for r in self.references:
                 
                 reference = self.references[r]
@@ -111,7 +111,6 @@ class BibTexPreprocessor(Preprocessor):
                 bibentry = self.create_bibentry(r, reference)
                 
                 if (sys.version_info > (3, 0)):
-
                     f.write(bibentry)
                 else:
                     f.write(bibentry).encode('utf-8')

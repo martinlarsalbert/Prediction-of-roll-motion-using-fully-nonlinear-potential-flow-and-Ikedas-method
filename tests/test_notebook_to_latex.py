@@ -2,6 +2,7 @@ import pytest
 import os.path
 
 from src import notebook_to_latex
+from src.itemize_preprocessor import ItemizePreprocessor
 import tests
 
 @pytest.fixture
@@ -32,6 +33,14 @@ def test_latex_cleaner():
 
 def test_clean_links():
     assert notebook_to_latex.clean_links(body='asss [dfdf](dfdfd) asss') == 'asss  asss'
+
+def test_itemize():
+    body = "Looking at the roll amplitude variation (right):\n* (Please note that this x-axis is revered in this graph)\n* $B_L$ does not change with amplitude, implying that they only contribute to the linear part ($B_1$) of the damping.\n* $B_F$ has a small amplitude dependancy but the linear part is dominating."
+
+    i = ItemizePreprocessor()
+    new_body = i.itemize(body=body)
+    a = 1
+
 
 def test_tree_writer(body, tmpdir):
 
