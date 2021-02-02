@@ -270,7 +270,7 @@ def splitter_section(document):
 
 class Equation(Math):
     
-    def __init__(self,data=None, label='eq:equation', url=None, filename=None, metadata=None, max_length=100):
+    def __init__(self,data=None, label='eq:equation', url=None, filename=None, metadata=None, max_length=150):
         self.label = label
         
         data_text = vlatex(data)
@@ -278,11 +278,19 @@ class Equation(Math):
             expanded = vlatex(sp.expand(data))
             parts = expanded.split('+')
             data_text = parts[0]
+            row_length = len(data_text)
             if len(parts) > 1:
                 for part in parts[1:]:
-                    data_text+='\\\\ +%s' % part
+                    if (row_length + len(part)) < max_length:
+                        data_text+='+%s' % part
+                        row_length+=len(part)
+                    else:
+                        data_text+='\\\\ +%s' % part
+                        row_length = len(part)
 
-        data_text_ = '\\begin{aligned}\n%s\n\\end{aligned}' % data_text
+            data_text_ = '\\begin{aligned}\n%s\n\\end{aligned}' % data_text
+        else:
+            data_text_ = data_text
 
         super().__init__(data=data_text_, url=url, filename=filename, metadata=metadata)
     
