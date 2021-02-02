@@ -65,6 +65,6 @@ def show():
 
     }
     section_table.rename(columns=rename, inplace=True)
-    lt = LateXTable(section_table)
+    lt = LateXTable(section_table.round(decimals=4))
     return lt
 

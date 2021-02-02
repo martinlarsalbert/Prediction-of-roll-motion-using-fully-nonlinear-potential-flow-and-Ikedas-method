@@ -15,13 +15,16 @@ import shutil
 import src
 import re
 from collections import OrderedDict
+from IPython.display import Math
+from sympy.physics.vector.printing import vpprint, vlatex
+import sympy as sp
 
 # Import the RST exproter
 from nbconvert import RSTExporter
 
 class FigureRenameError(Exception): pass
 
-def convert_notebook_to_latex(notebook_path:str, build_directory:str, save_main=True):
+def convert_notebook_to_latex(notebook_path:str, build_directory:str, save_main=True, skip_figures=False):
 
     _,notebook_file_name = os.path.split(notebook_path)
     notebook_name,_ = os.path.splitext(notebook_file_name)
@@ -48,7 +51,7 @@ def convert_notebook_to_latex(notebook_path:str, build_directory:str, save_main=
     c.TagRemovePreprocessor.remove_all_outputs_tags = ('remove_output',)
     c.TagRemovePreprocessor.remove_input_tags = ('remove_input',)
     #c.LatexExporter.preprocessors = [TagRemovePreprocessor,'src.bibpreprocessor.BibTexPreprocessor']
-    c.LatexExporter.preprocessors = [TagRemovePreprocessor, FigureName]
+    c.LatexExporter.preprocessors = [TagRemovePreprocessor, FigureName, src.bibpreprocessor.BibTexPreprocessor]
 
     # 2. Instantiate the exporter. We use the `basic` template for now; we'll get into more details
     # later about how to customize the exporter further.
@@ -62,11 +65,14 @@ def convert_notebook_to_latex(notebook_path:str, build_directory:str, save_main=
     (body, resources) = latex_exporter.from_notebook_node(nb)
 
     FilesWriter(body=body,resources=resources)
-       
+    
     fw = FilesWriter(config=c, input=False)
     
-    fw.write(body, resources, notebook_name=notebook_name)
-    
+    if not skip_figures:
+        fw.write(body, resources, notebook_name=notebook_name)
+    else:
+        fw.write(body, {}, notebook_name=notebook_name)
+
     # Creata a tree structure instead:
     tree_writer(body=body, build_directory=build_directory, save_main=save_main)
 
@@ -81,33 +87,33 @@ class FigureName(Preprocessor):
         for cell_id, cell in enumerate(nb['cells']):
 
             meta_data = cell['metadata']
-            if 'figure' in meta_data:
+            if 'name' in meta_data:
 
                 if 'outputs' in cell:
                     outputs = cell['outputs']
                     output_id = 0
-                    output = outputs[output_id]
-                    output_meta_data = output['metadata']
-                    filenames = output_meta_data['filenames']
+                    for output_id, output in enumerate(outputs):                    
+                        output = outputs[output_id]
+                        output_meta_data = output.get('metadata',None)
+                        if output_meta_data is None:
+                            continue
 
-                    output_name = 'output_%i_%i' % (cell_id, output_id)
-                    for key, value in filenames.items():
-                        if output_name in value:
+                        filenames = output_meta_data['filenames']
 
-                            figure = meta_data['figure']
-                            if not 'name' in figure:
-                                raise FigureRenameError('Figure in cell %i must have a name' % cell_id)
+                        output_name = 'output_%i_%i' % (cell_id, output_id)
+                        for key, value in filenames.items():
+                            if output_name in value:
 
-                            # Rename to "figure":
-                            new_figure_name = value.replace(output_name, figure['name'])
-                            
-                            # Meta data:
-                            nb['cells'][cell_id]['outputs'][output_id]['metadata']['filenames'][key] = new_figure_name       
+                                # Rename to "figure":
+                                new_figure_name = value.replace(output_name, meta_data['name'])
 
-                            # resources:
-                            resources['outputs'][new_figure_name] = resources['outputs'].pop(value)
-                            
-                    a = 1
+                                # Meta data:
+                                nb['cells'][cell_id]['outputs'][output_id]['metadata']['filenames'][key] = new_figure_name       
+
+                                # resources:
+                                resources['outputs'][new_figure_name] = resources['outputs'].pop(value)
+
+
         
         return nb, resources
 
@@ -167,8 +173,24 @@ def latex_cleaner(body:str):
     ## Clean equation:
     body = re.sub(r'\$\\displaystyle\W*\\begin{equation}',r'\\begin{equation}', body)
     body = re.sub(r'\\end{equation}\W*\$',r'\\end{equation}', body)
+
+    ## Clean links:
+    body = clean_links(body=body)
     
     return body
+
+def clean_links(body:str):
+    
+    """Cleaning something like:
+    \href{../../notebooks/01.3_select_suitable_MDL_test_KLVCC2_speed.ipynb\#yawrate}{yawrate}
+
+    Returns
+    -------
+    [type]
+        [description]
+    """
+    
+    return re.sub(r"\\href\{.*.ipynb[^}]*}{[^}]+}",'',body)
 
 def change_figure_paths(body:str, build_directory:str, figure_directory_name='figures'):
     """The figures are now in a subfolder, 
@@ -242,3 +264,33 @@ def splitter_section(document):
         sections[section_name] = section
 
     return sections
+
+class Equation(Math):
+    
+    def __init__(self,data=None, label='eq:equation', url=None, filename=None, metadata=None, max_length=100):
+        self.label = label
+        
+        data_text = vlatex(data)
+        if len(data_text) > max_length:
+            expanded = vlatex(sp.expand(data))
+            parts = expanded.split('+')
+            data_text = parts[0]
+            if len(parts) > 1:
+                for part in parts[1:]:
+                    data_text+='\\\\ +%s' % part
+
+        data_text_ = '\\begin{aligned}\n%s\n\\end{aligned}' % data_text
+
+        super().__init__(data=data_text_, url=url, filename=filename, metadata=metadata)
+    
+    def _repr_latex_(self):
+              
+        label='eq:one'
+        v2 = r"""
+\begin{equation}
+%s
+\label{%s}
+\end{equation}
+""" % (self.data,self.label)
+        
+        return Math(v2)._repr_latex_()

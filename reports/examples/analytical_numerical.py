@@ -71,12 +71,13 @@ def show(omega0_lambda, accelaration_lambda):
     ## Analytical
     phi_analytical = analytical_lambda(A_44=A_44, B_1=B_1, omega0=omega0, phi_0=phi_0, phi_01d=phi_01d, 
                                       t=t)
-
-
-    fig,ax=plt.subplots()
+    
+    fig,ax=plt.subplots()   
     ax.plot(t, phi_analytical, '-', label='analytical')
+    
     df_state_space.plot(y='phi', style='--', ax=ax, label='numerical')
     ax.set_ylabel(r'$\phi$ $[rad]$')
     ax.set_xlabel(r'time $[s]$')
     ax.grid(True)
     ax.legend()
+    

@@ -122,10 +122,11 @@ class BibTexPreprocessor(Preprocessor):
         except:
           print("Did not find cite2c")
 
-        building_directory = self.config['FilesWriter']['build_directory']
+        figure_directory = self.config['FilesWriter']['build_directory']
+        building_directory,_ = os.path.split(figure_directory)
         #bibfile_name = resources["unique_key"]+".bib"
         bibfile_name = "references.bib"
-        
+                
         bibfile_path = os.path.join(building_directory, bibfile_name)
         self.create_bibfile(bibfile_path)
 

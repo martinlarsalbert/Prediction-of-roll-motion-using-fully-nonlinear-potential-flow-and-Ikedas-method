@@ -4,3 +4,64 @@
 \bibliographystyle{unsrt}
 \bibliography{references}
 ((* endblock bibliography *))
+
+
+((*- block data_pdf -*))
+((*- if 'application/pdf' in output.metadata.filenames: -*))
+    ((*- if cell.metadata.widefigure: -*))
+        ((( draw_widefigure_with_caption(output.metadata.filenames['application/pdf'], cell.metadata.caption, cell.metadata.name) )))
+    ((*- else -*))
+        ((*- if cell.metadata.caption: -*))
+            ((*- if cell.metadata.name: -*))
+                ((( draw_figure_with_caption(output.metadata.filenames['application/pdf'], cell.metadata.caption, cell.metadata.name) )))
+            ((*- else -*))
+                ((( draw_figure_with_caption(output.metadata.filenames['application/pdf'], cell.metadata.caption, "") )))
+            ((*- endif *))
+        ((*- else -*))
+            ((( draw_figure_with_caption(output.metadata.filenames['application/pdf'], "") )))
+        ((*- endif *))
+    ((*- endif *))
+((*- endif *))
+((*- endblock -*))
+
+((*- block data_png -*))
+((*- if 'image/png' in output.metadata.filenames: -*))
+    ((*- if cell.metadata.widefigure: -*))
+        ((( draw_widefigure_with_caption(output.metadata.filenames['image/png'], cell.metadata.caption, cell.metadata.name) )))
+    ((*- else -*))
+        ((*- if cell.metadata.caption: -*))
+            ((*- if cell.metadata.name: -*))
+                ((( draw_figure_with_caption(output.metadata.filenames['image/png'], cell.metadata.caption, cell.metadata.name) )))
+            ((*- else -*))
+                ((( draw_figure_with_caption(output.metadata.filenames['image/png'], cell.metadata.caption, "") )))
+            ((*- endif *))
+        ((*- else -*))
+            ((( draw_figure_with_caption(output.metadata.filenames['image/png'], "") )))
+        ((*- endif *))
+    ((*- endif *))
+((*- endif *))
+((*- endblock -*))
+
+% Draw a figure using the graphicx package.
+((* macro draw_figure_with_caption(filename, caption, name) -*))
+((* set filename = filename | posix_path *))
+((*- block figure scoped -*))
+    \begin{figure}
+        \begin{center}\adjustimage{max size={0.9\linewidth}{0.4\paperheight}}{((( filename )))}\end{center}
+        \caption{((( caption )))}
+        \label{fig:((( name )))}
+    \end{figure}
+((*- endblock figure -*))
+((*- endmacro *))
+
+% Draw a figure using the graphicx package.
+((* macro draw_widefigure_with_caption(filename, caption, name) -*))
+((* set filename = filename | posix_path *))
+((*- block figure_wide scoped -*))
+    \begin{figure*}
+        \begin{center}\adjustimage{max size={0.9\linewidth}{0.4\paperheight}}{((( filename )))}\end{center}
+        \caption{((( caption )))}
+        \label{fig:((( name )))}
+    \end{figure*}
+((*- endblock figure_wide -*))
+((*- endmacro *))

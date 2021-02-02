@@ -30,7 +30,8 @@ def test_latex_cleaner():
     assert notebook_to_latex.latex_cleaner(r"""$\displaystyle
 \begin{equation}""") == r"""\begin{equation}"""
 
-
+def test_clean_links():
+    assert notebook_to_latex.clean_links(body='asss [dfdf](dfdfd) asss') == 'asss  asss'
 
 def test_tree_writer(body, tmpdir):
 
