@@ -101,7 +101,7 @@ def analyze_amplitude(model):
 
     return df_amplitudes
 
-def plot_amplitudes(df_amplitudes, paper_name, source='model test', ax=None, **kwargs):
+def plot_amplitudes(df_amplitudes, paper_name, source='model test', prefix='B', ax=None, **kwargs):
     
     if ax is None:
         fig,ax=plt.subplots()
@@ -113,20 +113,22 @@ def plot_amplitudes(df_amplitudes, paper_name, source='model test', ax=None, **k
     
     label='Run %i: %s' % (paper_name, source)
     
-    df_amplitudes.plot(x=pretty, y='B', label=label, style='.', alpha=0.5, ax=ax, **kwargs)
+    df_amplitudes.plot(x=pretty, y=prefix, label=label, style='.', alpha=0.5, ax=ax, **kwargs)
     color=ax.get_lines()[-1].get_color()
+    
     label='Run %i: model' % paper_name
-    df_amplitudes.plot(x=pretty, y='B_model', label=label, color=color, style='-', ax=ax)
+    df_amplitudes.plot(x=pretty, y='%s_model' % prefix, label='_nolegend_', color=color, style='-', ax=ax)
     ax.grid(True)
 
-def show(amplitudes, df_results, ylim=None):
+def show(amplitudes, df_results, ylim=None, source='model test', prefix='B'):
     
     ## Plotting:
     fig,ax=plt.subplots()
     for id,row in df_results.iterrows(): 
         df_amplitudes = amplitudes[id].copy()
-        plot_amplitudes(df_amplitudes=df_amplitudes, paper_name = row.paper_name, ax=ax)
+        plot_amplitudes(df_amplitudes=df_amplitudes, paper_name = row.paper_name, ax=ax, source=source, prefix=prefix)
 
+    ax.set_ylabel(r'$%s$' % prefix)    
     y_lim_motions = list(ax.get_ylim())
     y_lim_motions[0]=0
     y_lim_motions[1]*=1.05

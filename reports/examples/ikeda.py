@@ -30,6 +30,11 @@ def plot_ikeda(df_amplitudes,results, paper_name, ax=None):
     ax.legend()
 
 
+def get_estimator(id,ikeda_name):
+    file_name = '%s_%s.pkl' % (id,ikeda_name)
+    ikeda = joblib.load('../../models/%s' % file_name)
+    return ikeda
+
 def show(amplitudes, amplitudes_motions, models_mdl, ylim=None):
     id = 21338
     ikeda_names = ['ikeda_C_r','ikeda_r_s']
@@ -41,8 +46,7 @@ def show(amplitudes, amplitudes_motions, models_mdl, ylim=None):
     for ax,ikeda_name in zip(axes,ikeda_names):
 
         row = mdl_results.df_rolldecays.loc[id]
-        file_name = '%s_%s.pkl' % (id,ikeda_name)
-        ikeda = joblib.load('../../models/%s' % file_name)
+        ikeda = get_estimator(id=id, ikeda_name=ikeda_name)
         model = models_mdl[id]
         df_amplitudes = amplitudes[id]
         #phi_as = np.linspace(df_amplitudes['phi_a'].min(), df_amplitudes['phi_a'].max(), 100)
