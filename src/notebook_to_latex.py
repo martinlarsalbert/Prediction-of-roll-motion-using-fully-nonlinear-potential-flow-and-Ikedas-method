@@ -139,8 +139,12 @@ def tree_writer(body:str, build_directory:str, save_main=True):
         generate a main.tex with all subsections.
     """
 
+    # Last minute LaTeX changes.
     body = latex_cleaner(body)
     body = change_figure_paths(body=body, build_directory=build_directory)
+    body = change_inline_equations(body=body)
+    body = equation_links(body=body)
+    body = clean_figure_warning(body=body)
 
     pre, document, end = split_parts(body=body)
     sections = splitter_section(document=document)
@@ -193,7 +197,32 @@ def clean_links(body:str):
     
     return re.sub(r"\\href\{.*.ipynb[^}]*}{[^}]+}",'',body)
 
+def equation_links(body:str):
+    """
+    Replace:
+    Section \ref{eq_linear}
+    With:
+    \ref{eq:linear}
 
+    Parameters
+    ----------
+    body : str
+        [description]
+    """
+    for result in re.finditer(r'Section \\ref\{eq_([^}]+)', body):
+        name = result.group(1)
+        eq_label = 'eq:%s' % name
+        body = re.sub(r'Section \\ref\{eq_%s\}' % name,
+            r'eq. \\ref{%s}' % eq_label,
+            body
+        )
+
+    return body
+    
+
+
+
+    
 
 def change_figure_paths(body:str, build_directory:str, figure_directory_name='figures'):
     """The figures are now in a subfolder, 
@@ -212,8 +241,27 @@ def change_figure_paths(body:str, build_directory:str, figure_directory_name='fi
 
     return body
 
+def change_inline_equations(body:str):
+    """Modifying inline latex equations, ex:
+    \(B_{BK}\) 
+    to
+    $B_{BK}$ 
 
+    Parameters
+    ----------
+    body : str
+        """
 
+    body = re.sub(r'\\\(','$', body)
+    body = re.sub(r'\\\)','$', body)
+    return body
+
+def clean_figure_warning(body:str):
+    
+    s=r"""findfont: Font family ['"serif"'] not found. Falling back to DejaVu Sans."""
+    body = body.replace(s,'')
+    
+    return body
 
 def split_parts(body:str):
     """Split into:

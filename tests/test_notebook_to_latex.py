@@ -41,6 +41,13 @@ def test_itemize():
     new_body = i.itemize(body=body)
     a = 1
 
+def test_equation_link():
+
+    body = r'model (see Section \ref{eq_linear}).'
+    new_body = notebook_to_latex.equation_links(body=body)
+
+    a = 1
+
 
 def test_tree_writer(body, tmpdir):
 

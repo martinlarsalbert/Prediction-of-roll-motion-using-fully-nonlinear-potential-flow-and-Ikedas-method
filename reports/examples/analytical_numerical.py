@@ -1,5 +1,9 @@
+import warnings
+warnings.filterwarnings('ignore')
+
 import numpy as np
 import matplotlib.pyplot as plt
+plt.style.use('paper')
 import sympy as sp
 from scipy.integrate import solve_ivp
 import pandas as pd
