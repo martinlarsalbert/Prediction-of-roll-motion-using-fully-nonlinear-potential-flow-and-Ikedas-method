@@ -40,8 +40,9 @@
 ((* macro draw_figure_with_caption(filename, caption, name) -*))
 ((* set filename = filename | posix_path *))
 ((*- block figure scoped -*))
-    \begin{figure}
-        \begin{center}\adjustimage{max size={0.9\linewidth}{0.4\paperheight}}{((( filename )))}\end{center}
+    \begin{figure}[H]
+        \begin{center}\includegraphics[width = 0.5\textwidth]{((( filename )))}\end{center}
+        \vspace{-1cm}
         \caption{((( caption )))}
         \label{fig:((( name )))}
     \end{figure}
@@ -52,8 +53,9 @@
 ((* macro draw_widefigure_with_caption(filename, caption, name) -*))
 ((* set filename = filename | posix_path *))
 ((*- block figure_wide scoped -*))
-    \begin{figure*}
-        \begin{center}\adjustimage{max size={0.9\linewidth}{0.4\paperheight}}{((( filename )))}\end{center}
+	\begin{figure*}
+        \begin{center}\includegraphics[width = 0.5\textwidth]{((( filename )))}\end{center}
+        \vspace{-1cm}
         \caption{((( caption )))}
         \label{fig:((( name )))}
     \end{figure*}
