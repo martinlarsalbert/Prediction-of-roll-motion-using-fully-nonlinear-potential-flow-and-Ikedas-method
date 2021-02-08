@@ -10,7 +10,7 @@ import reports.examples.mdl
 file_paths = [
     '../../data/external/kvlcc2_rolldecay_0kn',
 #    '../../data/external/kvlcc2_rolldecay_15-5kn_const_large',
-#    '../../data/external/kvlcc2_rolldecay_15-5kn_const_large2',
+    '../../data/external/kvlcc2_rolldecay_15-5kn_const_large2',
 #    '../../data/external/kvlcc2_rolldecay_15-5kn_const_large_5deg',
 #    '../../data/external/kvlcc2_rolldecay_15-5kn_const_large_ikeda',
     '../../data/external/kvlcc2_rolldecay_15-5kn_ikeda_dev',
@@ -42,6 +42,9 @@ def get_models_and_results():
     df_results = df_results.astype(float)
     df_results['id'] = df_results['id'].astype(int)
     df_results['paper_name'] = df_results['paper_name'].astype(int)
+
+    df_results.loc[mask_visc,'method'] = 'Hybrid'
+    df_results.loc[~mask_visc,'method'] = 'FNPF'
     
 
     return models_motions,df_results
@@ -49,7 +52,10 @@ def get_models_and_results():
 def show(amplitudes, df_results, ylim=None):
 
     #index = df_parameters.loc[~mask_visc].index
-    index = df_parameters.index
+    #index = df_parameters.index
+    
+    index = ['kvlcc2_rolldecay_0kn','kvlcc2_rolldecay_15-5kn_ikeda_dev']
+    
     reports.examples.mdl.show(amplitudes=amplitudes, df_results=df_results.loc[index], ylim=ylim, source = 'FNPF', prefix='B_W')
 
 

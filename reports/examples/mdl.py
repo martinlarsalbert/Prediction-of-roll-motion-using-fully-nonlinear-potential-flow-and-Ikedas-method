@@ -55,6 +55,7 @@ def gather_results(models):
     df_results = df_results.astype(float)
     df_results['id'] = df_results['id'].astype(int)
     df_results['paper_name'] = df_results['paper_name'].astype(int)
+    df_results['method'] = 'model test'
 
     return df_results
 

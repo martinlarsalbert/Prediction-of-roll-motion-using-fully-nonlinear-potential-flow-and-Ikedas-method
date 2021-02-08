@@ -37,10 +37,10 @@ def get_estimator(id,ikeda_name):
 
 def show(amplitudes, amplitudes_motions, models_mdl, ylim=None):
     id = 21338
-    ikeda_names = ['ikeda_C_r','ikeda_r_s']
+    ikeda_names = ['ikeda_r_s','ikeda_C_r',]
     paper_ikeda_names = {
         'ikeda_C_r' : r'Decision tree $C_r$',
-        'ikeda_r_s' : r'Regular mplementation',
+        'ikeda_r_s' : r'Regular implementation',
     }
     fig,axes = plt.subplots(ncols=len(ikeda_names))
     for ax,ikeda_name in zip(axes,ikeda_names):
@@ -65,9 +65,10 @@ def show(amplitudes, amplitudes_motions, models_mdl, ylim=None):
         plot_ikeda(df_amplitudes=amplitudes[id], results=results, paper_name=row.paper_name, ax=ax)
     
         ax.set_title(paper_ikeda_names[ikeda_name])
-
+        ax.legend(loc='upper left')
+        
         if not ylim is None:
             ax.set_ylim(ylim)
     
-    axes[1].get_legend().set_visible(False)
-        
+    axes[0].get_legend().set_visible(False)
+    

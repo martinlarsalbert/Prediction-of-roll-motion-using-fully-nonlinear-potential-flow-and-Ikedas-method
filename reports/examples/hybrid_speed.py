@@ -9,6 +9,7 @@ import reports.mdl_results as mdl_results
 import src.helpers
 
 best_motions_ikeda = 'kvlcc2_rolldecay_15-5kn_ikeda_dev'
+invicid_motions = 'kvlcc2_rolldecay_15-5kn_const_large2'
 
 def show_frequency(df_results, amplitudes, amplitudes_motions, ylim=None):
     
@@ -38,19 +39,25 @@ def show_time(models_mdl, models_motions):
     model_mdl = models_mdl[id]
     row = mdl_results.df_rolldecays.loc[id]
     model_hybrid = deepcopy(models_motions[best_motions_ikeda])
+    model_invicid = deepcopy(models_motions[invicid_motions])
+    
     steals = ['C_1A']
     for steal in steals:
         model_hybrid.parameters[steal] = model_mdl.parameters[steal]
 
     X = model_mdl.X.copy()
     X_pred = model_hybrid.predict(X)
+    X_pred_inviscid = model_invicid.predict(X)
 
     fig,ax=plt.subplots()
     X['phi_deg'] = np.rad2deg(X['phi'])
     X_pred['phi_deg'] = np.rad2deg(X_pred['phi'])
+    X_pred_inviscid['phi_deg'] = np.rad2deg(X_pred_inviscid['phi'])
 
+    X_pred_inviscid.plot(y='phi_deg', style='-', label='Run %i: FNPF' % row.paper_name, alpha=0.5, ax=ax)
     X.plot(y='phi_deg', label='Run %i: model test' % row.paper_name, ax=ax)
     X_pred.plot(y='phi_deg', style='--', label='Run %i: Hybrid' % row.paper_name, ax=ax)
+        
     ax.grid(True)
     ax.set_xlabel(r'Time [s]')
     ax.set_ylabel(r'$\phi$ $[deg]$');
