@@ -19,6 +19,7 @@ from collections import OrderedDict
 from IPython.display import Math
 from sympy.physics.vector.printing import vpprint, vlatex
 import sympy as sp
+import numpy as np
 
 # Import the RST exproter
 from nbconvert import RSTExporter
@@ -143,7 +144,8 @@ def tree_writer(body:str, build_directory:str, save_main=True):
     body = latex_cleaner(body)
     body = change_figure_paths(body=body, build_directory=build_directory)
     body = change_inline_equations(body=body)
-    body = equation_links(body=body)
+    body = anchor_links(body=body)
+    body = anchor_links_section(body=body)
     body = clean_figure_warning(body=body)
 
     pre, document, end = split_parts(body=body)
@@ -195,9 +197,9 @@ def clean_links(body:str):
         [description]
     """
     
-    return re.sub(r"\\href\{.*.ipynb[^}]*}{[^}]+}",'',body)
+    return re.sub(r"\\href\{.*.ipynb[^}]*}{[^}]+}\n*",'',body)
 
-def equation_links(body:str):
+def anchor_links(body:str, prefixes = ['eq','fig','tab'], ref_tag='ref'):
     """
     Replace:
     Section \ref{eq_linear}
@@ -209,16 +211,49 @@ def equation_links(body:str):
     body : str
         [description]
     """
-    for result in re.finditer(r'Section \\ref\{eq_([^}]+)', body):
-        name = result.group(1)
-        eq_label = 'eq:%s' % name
-        body = re.sub(r'Section \\ref\{eq_%s\}' % name,
-            r'eq. \\ref{%s}' % eq_label,
-            body
-        )
+    for prefix in prefixes:
+
+        pattern1 = r'Section \\ref\{%s_([^}]+)' % prefix
+        
+        for result in re.finditer(pattern1, body):
+            name = result.group(1)
+            eq_label = '%s:%s' % (prefix,name)
+            pattern2 = r'Section \\ref\{%s_%s\}' % (prefix,name)
+            body = re.sub(pattern2,
+                r'\\%s{%s}' % (ref_tag, eq_label),
+                body
+            )
 
     return body
-    
+
+def anchor_links_section(body:str, prefixes = ['se'], ref_tag='nameref'):
+    """
+    Replace:
+    Section \ref{eq_linear}
+    With:
+    \ref{eq:linear}
+
+    Parameters
+    ----------
+    body : str
+        [description]
+    """
+    for prefix in prefixes:
+
+        pattern1 = r'Section \\ref\{%s_([^}]+)' % prefix
+        
+        for result in re.finditer(pattern1, body):
+            name = result.group(1)
+            eq_label = '%s:%s' % (prefix,name)
+            pattern2 = r'Section \\ref\{%s_%s\}' % (prefix,name)
+            body = re.sub(pattern2,
+                r'"\\%s{%s}"' % (ref_tag, eq_label),
+                body
+            )
+
+    return body
+
+   
 
 
 
@@ -323,18 +358,24 @@ class Equation(Math):
         
         data_text = vlatex(data)
         if len(data_text) > max_length:
-            expanded = vlatex(sp.expand(data))
-            parts = expanded.split('+')
-            data_text = parts[0]
+                        
+            pattern = r'([+-]*[^+-]+)'
+            parts = re.findall(pattern, data_text)
+            lengths = np.array([len(part) for part in parts])
+            if np.any(lengths > max_length):
+                expanded = vlatex(sp.expand(data))
+                parts = re.findall(pattern, expanded)
+            
+            data_text = ''
             row_length = len(data_text)
-            if len(parts) > 1:
-                for part in parts[1:]:
-                    if (row_length + len(part)) < max_length:
-                        data_text+='+%s' % part
-                        row_length+=len(part)
-                    else:
-                        data_text+='\\\\ +%s' % part
-                        row_length = len(part)
+
+            for part in parts:
+                if (row_length + len(part)) < max_length:
+                    data_text+='%s' % part
+                    row_length+=len(part)
+                else:
+                    data_text+='\\\\ %s' % part
+                    row_length = len(part)
 
             data_text_ = '\\begin{aligned}\n%s\n\\end{aligned}' % data_text
         else:
