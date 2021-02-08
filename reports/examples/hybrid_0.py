@@ -1,17 +1,56 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import joblib
+from copy import deepcopy
+from collections import OrderedDict
+import pandas as pd
 
 from reports.examples.mdl import plot_amplitudes
 import src.visualization.visualize as visualize 
 import reports.mdl_results as mdl_results
 import src.helpers
 from reports.examples.ikeda import plot_ikeda
+import shipflowmotionshelpers.shipflowmotionshelpers as helpers
+
+id = 21338
+key = 'kvlcc2_rolldecay_0kn'
+invicid_motions = key
+
+file_paths = [
+    '../../data/external/kvlcc2_rolldecay_0kn',
+]
+df_parameters = pd.DataFrame()
+df_parameters =  helpers.load_parameters(file_path=file_paths)
+
+def get_models_and_results():
+    
+    parameters = df_parameters.loc[key]
+    row = mdl_results.df_rolldecays.loc[id]
+    models_motions = OrderedDict()
+    df_results = pd.DataFrame()
+    
+    ikeda_name = 'ikeda_C_r'
+    file_name = '%s_%s_%s.pkl' % (id,key,ikeda_name)
+    model = joblib.load('../../models/%s' % file_name)['estimator']
+    
+    results = pd.Series(model.results, name=key)
+    results['paper_name'] = row.paper_name
+    results['id'] = row.name
+        
+    df_results = df_results.append(results)
+    
+    df_results = df_results.astype(float)
+    df_results['id'] = df_results['id'].astype(int)
+    df_results['paper_name'] = df_results['paper_name'].astype(int)
+
+    df_results['method'] = 'Hybrid'
+    
+    return models_motions,df_results
 
 
 def show(amplitudes, amplitudes_motions, models_mdl, ylim=None):
-    id = 21338
-    key = 'kvlcc2_rolldecay_0kn'
+
+    
     df_amplitudes_motions = amplitudes_motions[key].copy()
 
     row = mdl_results.df_rolldecays.loc[id]
@@ -45,3 +84,55 @@ def show(amplitudes, amplitudes_motions, models_mdl, ylim=None):
     ax.legend()
     if not ylim is None:
         ax.set_ylim(ylim)
+
+def show_time(models_mdl, models_motions):
+
+    model_mdl = models_mdl[id]
+    row = mdl_results.df_rolldecays.loc[id]
+    
+    ikeda_name = 'ikeda_C_r'
+    file_name = '%s_%s_%s.pkl' % (id,key,ikeda_name)
+    model_hybrid = joblib.load('../../models/%s' % file_name)['estimator']
+
+    model_invicid = deepcopy(models_motions[invicid_motions])
+    
+    X = model_mdl.X.copy()
+    X_pred = model_hybrid.predict(X)
+    X_pred_inviscid = model_invicid.predict(X)
+
+    fig,ax=plt.subplots()
+    X['phi_deg'] = np.rad2deg(X['phi'])
+    X_pred['phi_deg'] = np.rad2deg(X_pred['phi'])
+    X_pred_inviscid['phi_deg'] = np.rad2deg(X_pred_inviscid['phi'])
+
+    X_pred_inviscid.plot(y='phi_deg', style='-', label='Run %i: FNPF' % row.paper_name, alpha=0.5, ax=ax)
+    X.plot(y='phi_deg', label='Run %i: model test' % row.paper_name, ax=ax)
+    X_pred.plot(y='phi_deg', style='--', label='Run %i: Hybrid' % row.paper_name, ax=ax)
+        
+    ax.grid(True)
+    ax.set_xlabel(r'Time [s]')
+    ax.set_ylabel(r'$\phi$ $[deg]$');
+
+
+#key = 'kvlcc2_rolldecay_0kn'
+#df_amplitudes_motions = amplitudes_motions[key].copy()
+#row = mdl_results.df_rolldecays.loc[id]
+
+#ikeda_name = 'ikeda_C_r'
+#file_name = '%s_%s_%s.pkl' % (id,key,ikeda_name)
+#model_hybrid = joblib.load('../../models/%s' % file_name)['estimator']
+#model_mdl = models_mdl[id]
+
+#X = model_mdl.X.copy()
+#X_pred = model_hybrid.predict(X)
+#X['phi_deg'] = np.rad2deg(X['phi'])
+#X_pred['phi_deg'] = np.rad2deg(X_pred['phi'])
+#
+#
+#fig,ax=plt.subplots()
+#X.plot(y='phi_deg', label='Model test', ax=ax)
+#X_pred.plot(y='phi_deg', label='Hybrid', ax=ax)
+#ax.set_ylabel(r'$\phi$ $[deg]$')
+#ax.set_xlabel(r'Time $[s]$')
+#ax.grid(True)
+
