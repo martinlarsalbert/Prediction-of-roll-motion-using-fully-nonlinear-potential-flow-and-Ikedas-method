@@ -43,7 +43,7 @@ def get_models_and_results():
     df_results['id'] = df_results['id'].astype(int)
     df_results['paper_name'] = df_results['paper_name'].astype(int)
 
-    df_results['method'] = 'Hybrid'
+    df_results['method'] = 'hybrid'
     
     return models_motions,df_results
 
@@ -80,10 +80,13 @@ def show(amplitudes, amplitudes_motions, models_mdl, ylim=None):
     plot_ikeda(df_amplitudes=amplitudes[id], results=results_, paper_name=row.paper_name, ax=ax)
     plot_amplitudes(df_amplitudes=df_amplitudes_motions, source='FNPF', paper_name=row.paper_name,
                         ax=ax, color='red')
-    ax.set_title('Hybrid method')
+
     ax.legend()
     if not ylim is None:
         ax.set_ylim(ylim)
+
+    ax.set_ylabel(r'$B$ $[Nm \cdot s]$')
+    ax.set_xlabel(r'$\phi_a$ $[deg]$')
 
 def show_time(models_mdl, models_motions):
 

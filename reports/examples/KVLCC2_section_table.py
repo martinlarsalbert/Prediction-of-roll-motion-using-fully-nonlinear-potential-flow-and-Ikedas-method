@@ -64,7 +64,19 @@ def show():
         'a_3':r'$a_3$',
 
     }
-    section_table.rename(columns=rename, inplace=True)
-    lt = LateXTable(section_table.round(decimals=4), caption='KVLCC2 section table', label='kvlcc2_section_table')
+    
+    units = {
+        'x':r'$[m]$',
+        'beam':r'$[m]$',
+        'T':r'$[m]$',
+        'sigma':r'$[-]$',
+        'OG/d':r'$[-]',
+        'R':r'$[m]$',
+        'a_1':r'$[-]$',
+        'a_3':r'$[-]$',
+
+    }
+
+    lt = LateXTable(section_table.round(decimals=4), units=units, rename=rename, caption='KVLCC2 section table', label='kvlcc2_section_table')
     return lt
 

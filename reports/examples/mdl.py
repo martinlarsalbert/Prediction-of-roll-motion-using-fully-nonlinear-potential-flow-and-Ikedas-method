@@ -129,7 +129,9 @@ def show(amplitudes, df_results, ylim=None, source='model test', prefix='B'):
         df_amplitudes = amplitudes[id].copy()
         plot_amplitudes(df_amplitudes=df_amplitudes, paper_name = row.paper_name, ax=ax, source=source, prefix=prefix)
 
-    ax.set_ylabel(r'$%s$' % prefix)    
+    ax.set_ylabel(r'$%s$ $[Nm \cdot s]$' % prefix)    
+    ax.set_xlabel(r'$\phi_a$ $[deg]$')
+
     y_lim_motions = list(ax.get_ylim())
     y_lim_motions[0]=0
     y_lim_motions[1]*=1.05

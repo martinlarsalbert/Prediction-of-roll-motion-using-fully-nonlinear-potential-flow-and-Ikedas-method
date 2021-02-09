@@ -32,6 +32,9 @@ def show_frequency(df_results, amplitudes, amplitudes_motions, ylim=None):
 
     if not ylim is None:
         ax.set_ylim(ylim)
+
+    ax.set_ylabel(r'$B$ $[Nm \cdot s]$')
+    ax.set_xlabel(r'$\phi_a$ $[deg]$')
     
 def show_time(models_mdl, models_motions):
     

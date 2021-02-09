@@ -48,6 +48,7 @@ B_44_ = ss.Symbol(name='B_44', description='Total roll damping at a certain roll
 B_F = ss.Symbol(name='B_F', description='Friction roll damping', unit='Nm/(rad/s)')
 B_W = ss.Symbol(name='B_W', description='Wave roll damping', unit='Nm/(rad/s)')
 B_E = ss.Symbol(name='B_E', description='Eddy roll damping', unit='Nm/(rad/s)')
+B_E0_hat = ss.Symbol(name='B_E0_HAT', description='Eddy roll damping at zero speed', unit='-')
 B_BK = ss.Symbol(name='B_{BK}', description='Bilge keel roll damping', unit='Nm/(rad/s)')
 B_L = ss.Symbol(name='B_L', description='Hull lift roll damping', unit='Nm/(rad/s)')
 
@@ -79,3 +80,24 @@ D = sp.symbols('D')
 phi_0 = me.dynamicsymbols('phi_0')
 phi_0_dot = phi_0.diff()
 phi_0_dotdot = phi_0_dot.diff()
+
+"""
+Ikeda, Y.,
+1978. On eddy making component of roll damping force on naked hull. University of Osaka Prefacture,
+Department of Naval Architecture, Japan, Report No. 00403,
+Published in: Journal of Society of Naval Architects of Japan, Volume 142.
+"""
+C_P =  ss.Symbol(name='C_P', description='Pressure difference coefficient', unit='-')
+C_r =  ss.Symbol(name='C_r', description='Eddy damping coefficient', unit='-')
+r_max = ss.Symbol(name='r_max', description='Maximum distance from roll axis to hull', unit='m')
+P_m = ss.Symbol(name='P_m', description='Pressure difference', unit='N/m**2')
+R_b = ss.Symbol(name='R_b', description='Bilge radius', unit='m')
+f_1 = ss.Symbol(name='f_1', description='Difference of flow factor', unit='-')
+f_2 = ss.Symbol(name='f_2', description='Modification factor', unit='-')
+H_0 = ss.Symbol(name='H_0', description='Half beam-draft ratio', unit='-')
+B_E_star_hat = ss.Symbol(name='B_E_star_hat', description='Only nonlinear nondimensional damping', unit='-')
+
+## Lewis
+a_1 = ss.Symbol(name='a_1', description='Lewis section coefficient', unit='-')
+a_3 = ss.Symbol(name='a_3', description='Lewis section coefficient', unit='-')
+D_1= ss.Symbol(name='D_1', description='Lewis section coefficient', unit='-')

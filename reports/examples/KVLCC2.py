@@ -12,10 +12,11 @@ def show():
     ]
     df_parameters = pd.DataFrame()
     df_parameters =  helpers.load_parameters(file_path=file_paths)
-    parameters = df_parameters.iloc[-1]
+    parameters = df_parameters.iloc[[-1]]
+
+    parameters['draught'] = (parameters['ta'] + parameters['tf'])/2
 
     interesting = [
-    'title',
     'LPP',
     'B',
     'ZCG',
@@ -23,9 +24,34 @@ def show():
     'S',
     'V',
     'dens',
-    'ta',
-    'tf',
+    'draught',
     ]
-    table_parameters = pd.DataFrame(parameters[interesting]).transpose()
-    lt = LateXTable(table_parameters, caption='KVLCC2 model data', label='kvlcc2_model_data')
+
+    table_parameters = parameters[interesting]
+
+    rename = {
+        'LPP' : r'$L_{pp}$',
+        'B' : r'$beam$',
+        'ZCG' : r'$v_{cg}$',
+        'KXX' : r'$k_{xx}$',
+        'S' : r'$S$',
+        'V' : r'$V$',
+        'dens' : r'$rho$',
+        'draught' : r'$T$',
+        
+    }
+    
+    units = {
+        'LPP' : r'$[m]$',
+        'B' : r'$[m]$',
+        'ZCG' : r'$[m]$',
+        'KXX' : r'$[m]$',
+        'S' : r'$[m^2]$',
+        'V' : r'$\left[\frac{m}{s}\right]$',
+        'dens' : r'$\left[\frac{kg}{m^3}\right]$',
+        'draught' : r'$[m]$',        
+    }
+
+
+    lt = LateXTable(table_parameters, units=units, rename=rename, caption='KVLCC2 model data', label='kvlcc2_model_data')
     return lt

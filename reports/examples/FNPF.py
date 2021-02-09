@@ -43,7 +43,7 @@ def get_models_and_results():
     df_results['id'] = df_results['id'].astype(int)
     df_results['paper_name'] = df_results['paper_name'].astype(int)
 
-    df_results.loc[mask_visc,'method'] = 'Hybrid'
+    df_results.loc[mask_visc,'method'] = 'hybrid'
     df_results.loc[~mask_visc,'method'] = 'FNPF'
     
 

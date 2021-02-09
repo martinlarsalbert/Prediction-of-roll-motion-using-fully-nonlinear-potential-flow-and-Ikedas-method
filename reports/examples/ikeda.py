@@ -71,4 +71,5 @@ def show(amplitudes, amplitudes_motions, models_mdl, ylim=None):
             ax.set_ylim(ylim)
     
     axes[0].get_legend().set_visible(False)
+    axes[0].set_ylabel(r'$B$ $[Nm \cdot s]$')
     

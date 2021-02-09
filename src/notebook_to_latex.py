@@ -20,6 +20,7 @@ from IPython.display import Math
 from sympy.physics.vector.printing import vpprint, vlatex
 import sympy as sp
 import numpy as np
+from src import symbols
 
 # Import the RST exproter
 from nbconvert import RSTExporter
@@ -147,6 +148,7 @@ def tree_writer(body:str, build_directory:str, save_main=True):
     body = anchor_links(body=body)
     body = anchor_links_section(body=body)
     body = clean_figure_warning(body=body)
+    body = ole_ole_ole(body=body)
 
     pre, document, end = split_parts(body=body)
     sections = splitter_section(document=document)
@@ -294,8 +296,24 @@ def change_inline_equations(body:str):
 def clean_figure_warning(body:str):
     
     s=r"""findfont: Font family ['"serif"'] not found. Falling back to DejaVu Sans."""
-    body = body.replace(s,'')
     
+    body = body.replace(s,'')
+
+    s2 = r"""\begin{Verbatim}[commandchars=\\\{\}]
+
+    \end{Verbatim}
+"""    
+    body = body.replace(s2,'')
+
+    return body
+
+def ole_ole_ole(body:str):
+    """replacing é with \'e
+
+    """
+
+    body = body.replace(r'é',r"\'e")
+
     return body
 
 def split_parts(body:str):
@@ -352,10 +370,20 @@ def splitter_section(document):
     return sections
 
 class Equation(Math):
+
+    subs = [
+        (symbols.B_E0_hat, sp.symbols('\hat{B}_{E0}')),
+        (symbols.B_E_star_hat, sp.symbols('\hat{B^*}_{E}')),
+        (symbols.omega_hat, sp.symbols('\hat{\omega}')),
+                
+    ]
     
-    def __init__(self,data=None, label='eq:equation', url=None, filename=None, metadata=None, max_length=150):
+    def __init__(self,data=None, label='eq:equation', url=None, filename=None, metadata=None, max_length=150, subs=True):
         self.label = label
         
+        if subs:
+            data = data.subs(self.subs)
+
         data_text = vlatex(data)
         if len(data_text) > max_length:
                         
