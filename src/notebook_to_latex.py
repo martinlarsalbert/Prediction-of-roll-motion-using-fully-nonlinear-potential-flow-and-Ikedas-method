@@ -149,14 +149,18 @@ def tree_writer(body:str, build_directory:str, save_main=True):
     body = anchor_links_section(body=body)
     body = clean_figure_warning(body=body)
     body = ole_ole_ole(body=body)
+    body = star_sub_sections(body=body)
+    body = citep(body=body)
 
     pre, document, end = split_parts(body=body)
     sections = splitter_section(document=document)
 
     main = '%s\n\\begin{document}\n' % pre
     
-    for section_name, section in sections.items():
+    for section_name, section_ in sections.items():
         
+        section = capital_section(body=section_)  
+
         # Create the section file:
         section_file_name = '%s.tex' % section_name
         section_file_path = os.path.join(build_directory, section_file_name)
@@ -255,12 +259,6 @@ def anchor_links_section(body:str, prefixes = ['se'], ref_tag='nameref'):
 
     return body
 
-   
-
-
-
-    
-
 def change_figure_paths(body:str, build_directory:str, figure_directory_name='figures'):
     """The figures are now in a subfolder, 
     so the paths need to be changed.
@@ -314,6 +312,45 @@ def ole_ole_ole(body:str):
 
     body = body.replace(r'é',r"\'e")
 
+    return body
+
+def capital_section(body:str):
+    """
+    Change:
+    \section{Abstract}
+    To:
+    \section*{ABSTRACT}
+    """
+    pattern = r'\\section\{([^}]+)'
+    for title in re.findall(pattern=pattern, string=body):
+        TITLE = title.upper()
+        pattern2 = r'\\section\{%s\}' % title
+        repl = r'\section*{%s}' % TITLE
+        body = re.sub(pattern2, repl=repl, string=body)
+
+    return body
+
+def star_sub_sections(body:str):
+    """
+    Change
+    \subsection
+    \subsubsection
+    To:
+    \subsection*
+    \subsubsection*
+    """
+    body = body.replace(r'\subsection',r'\subsection*')
+    body = body.replace(r'\subsubsection',r'\subsubsection*')
+    return body
+
+def citep(body:str):
+    """
+    Change
+    \cite
+    to
+    \citep
+    """
+    body = body.replace(r'\cite',r'\citep')
     return body
 
 def split_parts(body:str):

@@ -100,6 +100,37 @@ class BibTexPreprocessor(Preprocessor):
         
         return entry
 
+    def fix_non_ansii_characters(self):
+
+        for key, reference in self.references.items():
+            
+            if not 'author' in reference:
+                raise NoAuthorError('No author for reference:%s' % reference)
+            
+            authors = reference['author']
+            for n,author in enumerate(authors):
+                
+                self.references[key]['author'][n]['family'] = self.replace_non_ascii(author['family'])
+                self.references[key]['author'][n]['given'] = self.replace_non_ascii(author['given'])
+
+    @staticmethod
+    def replace_non_ascii(s:str):
+
+        replacements = {
+            'å' : r'{\aa}',
+            'ä' : r'{\"a}',
+            'ö' : r'{\"o}',
+            'Å' : r'{\AA}',
+            'Ä' : r'{\"A}',
+            'Ö' : r'{\"O}',
+            'é': r"\'e",
+        }
+
+        for old,new in replacements.items():
+            s = s.replace(old, new)
+
+        return s
+
     def create_bibfile(self, filename):
         if not os.path.exists(os.path.dirname(filename)):
             os.makedirs(os.path.dirname(filename))
@@ -120,6 +151,8 @@ class BibTexPreprocessor(Preprocessor):
           self.references = nb["metadata"]["cite2c"]["citations"]
         except:
           print("Did not find cite2c")
+
+        self.fix_non_ansii_characters()
 
         figure_directory = self.config['FilesWriter']['build_directory']
         building_directory,_ = os.path.split(figure_directory)
