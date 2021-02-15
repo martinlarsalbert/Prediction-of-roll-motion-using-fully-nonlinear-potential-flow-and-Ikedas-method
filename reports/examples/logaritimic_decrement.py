@@ -5,8 +5,8 @@ from scipy.integrate import solve_ivp
 import pandas as pd
 from sympy import latex
 
-from src import equations
-from src import symbols
+from rolldecayestimators import equations
+from rolldecayestimators import symbols
 from rolldecayestimators import lambdas
 from rolldecayestimators.substitute_dynamic_symbols import lambdify
 

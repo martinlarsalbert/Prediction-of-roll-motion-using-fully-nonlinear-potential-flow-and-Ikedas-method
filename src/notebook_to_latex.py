@@ -10,6 +10,7 @@ import nbconvert.preprocessors.extractoutput
 from nbconvert.preprocessors import TagRemovePreprocessor, Preprocessor
 import src.bibpreprocessor
 from src.itemize_preprocessor import ItemizePreprocessor
+from src.quad_preprocessor import QuadPreprocessor
 from traitlets.config import Config
 import os
 import shutil
@@ -20,7 +21,8 @@ from IPython.display import Math
 from sympy.physics.vector.printing import vpprint, vlatex
 import sympy as sp
 import numpy as np
-from src import symbols
+from rolldecayestimators import symbols
+from rolldecayestimators import equations
 
 # Import the RST exproter
 from nbconvert import RSTExporter
@@ -54,7 +56,7 @@ def convert_notebook_to_latex(notebook_path:str, build_directory:str, save_main=
     c.TagRemovePreprocessor.remove_all_outputs_tags = ('remove_output',)
     c.TagRemovePreprocessor.remove_input_tags = ('remove_input',)
     #c.LatexExporter.preprocessors = [TagRemovePreprocessor,'src.bibpreprocessor.BibTexPreprocessor']
-    c.LatexExporter.preprocessors = [TagRemovePreprocessor, FigureName, src.bibpreprocessor.BibTexPreprocessor, ItemizePreprocessor]
+    c.LatexExporter.preprocessors = [TagRemovePreprocessor, FigureName, src.bibpreprocessor.BibTexPreprocessor, ItemizePreprocessor, QuadPreprocessor]
 
     # 2. Instantiate the exporter. We use the `basic` template for now; we'll get into more details
     # later about how to customize the exporter further.
@@ -406,20 +408,15 @@ def splitter_section(document):
 
     return sections
 
+equation_dict = dict()
 class Equation(Math):
-
-    subs = [
-        (symbols.B_E0_hat, sp.symbols('\hat{B}_{E0}')),
-        (symbols.B_E_star_hat, sp.symbols('\hat{B^*}_{E}')),
-        (symbols.omega_hat, sp.symbols('\hat{\omega}')),
-                
-    ]
-    
-    def __init__(self,data=None, label='eq:equation', url=None, filename=None, metadata=None, max_length=150, subs=True):
-        self.label = label
         
+    def __init__(self,data:sp.Eq,label:str, url=None, filename=None, metadata=None, max_length=150, subs=True):
+        self.label = label
+        self.expression = data
+
         if subs:
-            data = data.subs(self.subs)
+            data = data.subs(equations.nicer_LaTeX)
 
         data_text = vlatex(data)
         if len(data_text) > max_length:
@@ -447,6 +444,10 @@ class Equation(Math):
             data_text_ = data_text
 
         super().__init__(data=data_text_, url=url, filename=filename, metadata=metadata)
+
+        global equation_dict
+        equation_dict[label] = self.expression  # Add this equation to the global list (used for nomenclature)
+
     
     def _repr_latex_(self):
               

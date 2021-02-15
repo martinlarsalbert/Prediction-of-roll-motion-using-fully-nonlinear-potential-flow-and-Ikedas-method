@@ -4,7 +4,8 @@ import matplotlib
 import re
 import sympy as sp
 import rolldecayestimators.equations
-#from latex_helpers.pylatex_extenders import GeneralContainer
+from rolldecayestimators import equations
+import rolldecayestimators.special_symbol as ss
 
 def setup(rcParams):
     # Change to paper custom style:
@@ -163,8 +164,7 @@ def _latex_unit(unit:str):
     return latex_unit
 
 
-def _generate_latex_nomenclature(symbols):
-
+def _generate_latex_nomenclature(symbols, subs=True, join_description=True, additional_descriptions={}, additions_units={}):
     """
     The method should create something like this:
 
@@ -172,33 +172,106 @@ def _generate_latex_nomenclature(symbols):
     \nomenclature{$c$}{Speed of light in a vacuum inertial frame \nomunit{$m/s$}}
     \nomenclature{$h$}{Planck constant}
     \printnomenclature
+    
+    Parameters
+    ----------
+    subs : bool
+        Make substitutions of hat symbols etc.
+        (The substitutions are taken from equations.nicer_LaTeX)
+    join_description : bool
+        Symbols with the same description will get the same row in nomenclature.
+    additional_descriptions : dict
+        additional desctiption can be added
+    additions_units : dict
+        additional units can be added
     """
 
+    symbols_ = dict(symbols)  # making a copy
+
+    ## Divide the symbols in rows:
+    description_rows = {}
+    if join_description:
+        descriptions = {}
+        for name,symbol in sorted(symbols.items()):
+            
+            if hasattr(symbol,'description'):
+                description = symbol.description
+            elif symbol in additional_descriptions:
+                description = additional_descriptions[symbol]
+            else:
+                continue
+            
+            if hasattr(symbol,'description'):
+                if not symbol.description in descriptions:
+                    descriptions[symbol.description] = []
+                
+                descriptions[symbol.description].append(symbol)
+                symbols_.pop(symbol.name)
+
+        # Inversing this dict:
+        description_rows = {items[0].name:items for description,items in descriptions.items()}
+    
+    for name,symbol in symbols_.items():
+        if not name in description_rows:
+            description_rows[name] = [symbol]
+
     content = ''
-    for name,symbol in sorted(symbols.items()):
-        assert isinstance(symbol,sp.Symbol)
+    for name,row in sorted(description_rows.items()):
+        
+        latex=''
+        first = True
+        for symbol in row:
+            assert isinstance(symbol,sp.Symbol)
 
-        description = ''
-        unit = ''
+            latex_,description,unit = _symbol_to_latex(symbol=symbol, name=name, subs=subs, additional_descriptions=additional_descriptions, 
+                                                        additions_units=additions_units)
+            
+            if first:
+                first=False
+            else:
+                latex+=','
 
-        if hasattr(symbol,'description'):
-            description=symbol.description
-            description=description[0].lower() + description[1:]
-        else:
-            if name == 't':
-                description='time'
-                unit='s'
-
-        if hasattr(symbol, 'unit'):
-            unit=_latex_unit(unit=symbol.unit)
-
-        latex = symbol._repr_latex_()
-
+            latex+='%s' % latex_
+            
         row = r'\nomenclature{'+latex+'}{'+description+ r'\nomunit{' + unit + '}}\n'
+        
         content+=row
 
     latex_nomenclature = r"\mbox{}" + '\n' + content + '\n' + r"\printnomenclature"
     return latex_nomenclature
+
+def _symbol_to_latex(symbol:ss.Symbol, name:str, subs=True, additional_descriptions={}, additions_units={}):
+    
+    description = ''
+    unit=''
+    if hasattr(symbol,'description'):
+        description=symbol.description
+    
+    if symbol in additional_descriptions:
+        description = additional_descriptions[symbol]            
+        
+    if len(description) == 0:
+        if name == 't':
+            description='time'
+            unit='s'
+    
+    if len(description) > 1:
+        description=description[0].lower() + description[1:]
+    
+    if hasattr(symbol, 'unit'):
+        unit=_latex_unit(unit=symbol.unit)
+
+    if symbol in additions_units:
+        unit = additional_descriptions[symbol]
+
+    if subs:
+        symbol = symbol.subs(equations.nicer_LaTeX)
+    latex = symbol._repr_latex_()
+
+    if unit=='':
+        unit = ' '
+
+    return latex,description,unit
 
 def save_table(file_path, tabular_tex:str, label:str, caption:str):
 
