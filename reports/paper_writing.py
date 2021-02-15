@@ -154,7 +154,7 @@ def _get_symbols(equation_dict:dict):
     for name,eq in equation_dict.items():
         free_symbols = {symbol.name:symbol for symbol in eq.free_symbols}
         symbols.update(free_symbols)
-
+    
     return symbols
 
 def _latex_unit(unit:str):
@@ -201,12 +201,12 @@ def _generate_latex_nomenclature(symbols, subs=True, join_description=True, addi
             else:
                 continue
             
-            if hasattr(symbol,'description'):
-                if not symbol.description in descriptions:
-                    descriptions[symbol.description] = []
-                
-                descriptions[symbol.description].append(symbol)
-                symbols_.pop(symbol.name)
+            
+            if not description in descriptions:
+                descriptions[description] = []
+            
+            descriptions[description].append(symbol)
+            symbols_.pop(symbol.name)
 
         # Inversing this dict:
         description_rows = {items[0].name:items for description,items in descriptions.items()}
@@ -259,10 +259,10 @@ def _symbol_to_latex(symbol:ss.Symbol, name:str, subs=True, additional_descripti
         description=description[0].lower() + description[1:]
     
     if hasattr(symbol, 'unit'):
-        unit=_latex_unit(unit=symbol.unit)
+        unit=unit=symbol.unit
 
     if symbol in additions_units:
-        unit = additional_descriptions[symbol]
+        unit = additions_units[symbol]
 
     if subs:
         symbol = symbol.subs(equations.nicer_LaTeX)
@@ -270,6 +270,8 @@ def _symbol_to_latex(symbol:ss.Symbol, name:str, subs=True, additional_descripti
 
     if unit=='':
         unit = ' '
+
+    unit = _latex_unit(unit)
 
     return latex,description,unit
 

@@ -4,11 +4,12 @@ class PrettyTable(list):
     """ Overridden list class which takes a 2-dimensional list of 
         the form [[1,2,3],[4,5,6]], and renders HTML and LaTeX Table in 
         IPython Notebook. For LaTeX export two styles can be chosen."""
-    def __init__(self, initlist=[], extra_header=None, print_latex_longtable=True, caption='Caption', label='label', fontsize=r'\scriptsize'):
+    def __init__(self, initlist=[], extra_header=None, print_latex_longtable=True, caption='Caption', label='label', fontsize=r'\scriptsize', hline=1):
         self.print_latex_longtable = print_latex_longtable
         self.caption=caption
         self.label=label
         self.fontsize=fontsize
+        self.hline = hline
         
         if extra_header is not None:
             if len(initlist[0]) != len(extra_header):
@@ -48,17 +49,18 @@ class PrettyTable(list):
 \\label{tab:%s}
 \\begin{tabular}""" % (self.fontsize, self.caption, self.label)]
      
-        latex.append("{"+"".join((["l"]*len(self[0])))+"}\n")
-        latex.append("\\toprule\\addlinespace\n")
+        latex.append("{|"+"".join((["l|"]*len(self[0])))+"}\n")
+        
+        latex.append("\\hline\\addlinespace\n")
         for i,row in enumerate(self):
             latex.append(" & ".join(map(format, row)))
             latex.append("\\\\ \n")
-            if i==0:
-                latex.append("\\midrule")
+            if i==self.hline:
+                latex.append("\\hline")
         
         
         latex.append("""
-\\bottomrule
+\\hline
 \\end{tabular}
 \\end{table}""")
 
