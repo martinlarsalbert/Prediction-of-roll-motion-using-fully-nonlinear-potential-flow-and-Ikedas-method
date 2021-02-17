@@ -3,7 +3,7 @@ warnings.filterwarnings('ignore')
 
 import numpy as np
 import matplotlib.pyplot as plt
-plt.style.use('paper')
+plt.style.use('paper.mplstyle')
 import sympy as sp
 from scipy.integrate import solve_ivp
 import pandas as pd
