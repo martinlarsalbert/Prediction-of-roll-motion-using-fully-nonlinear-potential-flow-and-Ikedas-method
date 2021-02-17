@@ -1,0 +1,17 @@
+channels:
+  - conda-forge
+dependencies:
+  - python
+  - numpy
+  - matplotlib
+  - pandas
+  - rise
+  - scipy
+  - sympy
+  - joblib
+  - rolldecay-estimators
+  - pyscores2
+  - shipflowmotionshelpers
+  
+  - pip:
+    - jupyter-contrib-nbextensions
