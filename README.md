@@ -2,7 +2,7 @@ Prediction-of-roll-damping-using-fully-nonlinear-potential-flow-and-Ikedas-metho
 ==============================
 The repository was used for the work conducted for the paper: "Prediction of roll damping using fully nonlinear potential flow and Ikeda's method". The LaTeX for the actual paper is however [here](https://github.com/martinlarsalbert/inviscid_CFD_-roll_decay)
 
-https://mybinder.org/v2/gh/martinlarsalbert/Prediction-of-roll-motion-using-fully-nonlinear-potential-flow-and-Ikedas-method/HEAD
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/martinlarsalbert/Prediction-of-roll-motion-using-fully-nonlinear-potential-flow-and-Ikedas-method/HEAD)
 
 ## Note!
 Some of the dependencies and the data used in this repo are unfortunatelly not open source.
