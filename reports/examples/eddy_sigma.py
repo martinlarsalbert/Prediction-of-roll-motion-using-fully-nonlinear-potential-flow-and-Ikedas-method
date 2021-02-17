@@ -68,3 +68,5 @@ def show():
     ax_sigma.plot(df_.index,df_['sigma'], 'r-', label=label, zorder=20)
     ax_sigma.set_ylabel(label)
     
+    ax.set_xlabel(r'R/beam')
+    

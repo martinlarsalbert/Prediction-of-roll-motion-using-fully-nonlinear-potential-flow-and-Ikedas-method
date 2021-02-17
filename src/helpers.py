@@ -229,10 +229,7 @@ def calculate_B_hat(parameters, g=9.81, rho=1000, **kwargs):
 
 
 def calculate_B_star_hat(parameters, g=9.81, rho=1000, **kwargs):
-    
-    B = parameters.B
-    R = parameters.R 
-
+  
     B_E0_hat = calculate_B_hat(parameters=parameters, g=g, rho=rho, **kwargs)   
     B_E0_star_hat = B_E0_hat*3*np.pi/8
     

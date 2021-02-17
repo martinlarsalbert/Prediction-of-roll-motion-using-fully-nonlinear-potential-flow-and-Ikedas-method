@@ -1,0 +1,17 @@
+Roll decay tests for KVLCC2
+
+Simulations with Fully non-linear potential flow (FNPF):
+fnpf_parameters.csv : contains meta data about the simulations.
+fnpf_kvlcc2_rolldecay_0kn.csv : invicid simulation at 0 knots
+fnpf_kvlcc2_rolldecay_15-5kn_const_large2.csv : invicid simualtion at 15.5 knots
+
+Hybrid method:
+fnpf_kvlcc2_rolldecay_15-5kn_ikeda_dev.csv : hybrid simulation at 15.5 knots
+
+Model tests:
+model_test_parameters.csv : meta data about the model tests
+model_test_units.csv : units in files
+Time series corresponding to the meta data.
+model_test_21337.csv
+model_test_21338.csv
+model_test_21340.csv

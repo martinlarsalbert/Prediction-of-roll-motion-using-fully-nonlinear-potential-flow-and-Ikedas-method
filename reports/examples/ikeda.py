@@ -64,7 +64,7 @@ def show(amplitudes, amplitudes_motions, models_mdl, ylim=None):
 
         plot_ikeda(df_amplitudes=amplitudes[id], results=results, paper_name=row.paper_name, ax=ax)
     
-        ax.set_title(paper_ikeda_names[ikeda_name])
+        #ax.set_title(paper_ikeda_names[ikeda_name])
         ax.legend(loc='upper left')
         
         if not ylim is None:

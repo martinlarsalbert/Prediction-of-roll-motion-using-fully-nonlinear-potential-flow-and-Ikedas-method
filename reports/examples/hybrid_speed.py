@@ -24,7 +24,7 @@ def show_frequency(df_results, amplitudes, amplitudes_motions, ylim=None):
 
         df_amplitudes.sort_values(by='phi_a', inplace=True)
         df_amplitudes['phi_a_deg'] = np.rad2deg(df_amplitudes['phi_a'])
-        plot_amplitudes(df_amplitudes=df_amplitudes, source='Hybrid', paper_name=row.paper_name,ax=ax)
+        plot_amplitudes(df_amplitudes=df_amplitudes, source='hybrid', paper_name=row.paper_name,ax=ax)
 
     id = 21340
     row = mdl_results.df_rolldecays.loc[id]
@@ -59,7 +59,7 @@ def show_time(models_mdl, models_motions):
 
     X_pred_inviscid.plot(y='phi_deg', style='-', label='Run %i: FNPF' % row.paper_name, alpha=0.5, ax=ax)
     X.plot(y='phi_deg', label='Run %i: model test' % row.paper_name, ax=ax)
-    X_pred.plot(y='phi_deg', style='--', label='Run %i: Hybrid' % row.paper_name, ax=ax)
+    X_pred.plot(y='phi_deg', style='--', label='Run %i: hybrid' % row.paper_name, ax=ax)
         
     ax.grid(True)
     ax.set_xlabel(r'Time [s]')

@@ -53,5 +53,5 @@ def show():
     }
 
 
-    lt = LateXTable(table_parameters, units=units, rename=rename, caption='KVLCC2 model data', label='kvlcc2_model_data')
+    lt = LateXTable(table_parameters, units=units, rename=rename, caption='KVLCC2 model data', label='tab:kvlcc2_model_data')
     return lt

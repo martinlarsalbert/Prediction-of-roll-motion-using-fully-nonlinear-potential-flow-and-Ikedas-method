@@ -153,7 +153,7 @@ def tree_writer(body:str, build_directory:str, save_main=True):
     body = ole_ole_ole(body=body)
     body = star_sub_sections(body=body)
     body = citep(body=body)
-
+    
     pre, document, end = split_parts(body=body)
     sections = splitter_section(document=document)
 
@@ -162,6 +162,8 @@ def tree_writer(body:str, build_directory:str, save_main=True):
     for section_name, section_ in sections.items():
         
         section = capital_section(body=section_)  
+
+        section = remove_whitespaces(body=section)
 
         # Create the section file:
         section_file_name = '%s.tex' % section_name
@@ -353,6 +355,12 @@ def citep(body:str):
     \citep
     """
     body = body.replace(r'\cite',r'\citep')
+    return body
+
+def remove_whitespaces(body:str):
+    body = re.sub(r' +\n','\n', body)
+    body = re.sub(r'\n[ \n]+','\n', body)
+    
     return body
 
 def split_parts(body:str):

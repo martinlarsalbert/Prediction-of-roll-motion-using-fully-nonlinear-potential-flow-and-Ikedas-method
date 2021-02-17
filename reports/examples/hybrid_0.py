@@ -110,7 +110,7 @@ def show_time(models_mdl, models_motions):
 
     X_pred_inviscid.plot(y='phi_deg', style='-', label='Run %i: FNPF' % row.paper_name, alpha=0.5, ax=ax)
     X.plot(y='phi_deg', label='Run %i: model test' % row.paper_name, ax=ax)
-    X_pred.plot(y='phi_deg', style='--', label='Run %i: Hybrid' % row.paper_name, ax=ax)
+    X_pred.plot(y='phi_deg', style='--', label='Run %i: hybrid' % row.paper_name, ax=ax)
         
     ax.grid(True)
     ax.set_xlabel(r'Time [s]')
