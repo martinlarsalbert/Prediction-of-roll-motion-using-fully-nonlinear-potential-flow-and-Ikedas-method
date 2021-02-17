@@ -2,18 +2,13 @@ Prediction-of-roll-motion-using-fully-nonlinear-potential-flow-and-Ikedas-method
 ==============================
 The repository was used for the work conducted for the paper: "Prediction of roll motion using fully nonlinear potential flow and Ikeda's method". The LaTeX for the actual paper is however [here](https://github.com/martinlarsalbert/inviscid_CFD_-roll_decay)
 
-
+The easiest way to reproduce the results in this research is by using the binder link below:
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/martinlarsalbert/Prediction-of-roll-motion-using-fully-nonlinear-potential-flow-and-Ikedas-method/HEAD?filepath=reports%2FISOPE_outline%2F01.1.outline.ipynb)
 
-## Note!
-Some of the dependencies and the data used in this repo are unfortunatelly not open source.
-
-# Setup
+# Development Setup
 ## .env
+To get access to the database do the following (this is not needed to reproduce the results in the paper).
 place a file called *.env* in the root of this repo containing the environmental variable for the database password. Simply add: password="..."
-
-## nbstripout
-Use a pre-commit filter called [nbstripout](https://github.com/kynan/nbstripout) to clean the output from the notebooks, if they contain sensitive information.
 
 Project Organization
 ------------
