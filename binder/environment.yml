@@ -9,9 +9,8 @@ dependencies:
   - scipy
   - sympy
   - joblib
-  - rolldecay-estimators
-  - pyscores2
-  - shipflowmotionshelpers
   
   - pip:
-    - jupyter-contrib-nbextensions
+    - rolldecay-estimators
+    - pyscores2
+    - shipflowmotionshelpers
