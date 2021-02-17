@@ -23,7 +23,7 @@ def show():
     phi_a_deg = 10
     phi_a = np.deg2rad(phi_a_deg)
 
-    model_mdl = joblib.load('../../models/KVLCC2_speed.pkl')
+    model_mdl = joblib.load('../../models/KVLCC2_21340.pkl')
 
     ## Amplitude variation 1
     phi_as = np.deg2rad(np.linspace(0,phi_a_deg,N))

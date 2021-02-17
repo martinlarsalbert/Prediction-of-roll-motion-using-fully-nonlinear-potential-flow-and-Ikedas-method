@@ -20,7 +20,7 @@ file_paths = [
     '../../data/external/kvlcc2_rolldecay_0kn',
 ]
 df_parameters = pd.DataFrame()
-df_parameters =  helpers.load_parameters(file_path=file_paths)
+df_parameters = pd.read_csv('../../data/processed/roll decay KVLCC2/fnpf_parameters.csv', index_col=0)
 
 def get_models_and_results():
     

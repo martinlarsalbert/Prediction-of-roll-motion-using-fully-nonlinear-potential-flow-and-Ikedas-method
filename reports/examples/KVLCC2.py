@@ -11,7 +11,7 @@ def show():
     '../../data/external/kvlcc2_rolldecay_15-5kn',
     ]
     df_parameters = pd.DataFrame()
-    df_parameters =  helpers.load_parameters(file_path=file_paths)
+    df_parameters = pd.read_csv('../../data/processed/roll decay KVLCC2/fnpf_parameters.csv', index_col=0)
     parameters = df_parameters.iloc[[-1]]
 
     parameters['draught'] = (parameters['ta'] + parameters['tf'])/2
