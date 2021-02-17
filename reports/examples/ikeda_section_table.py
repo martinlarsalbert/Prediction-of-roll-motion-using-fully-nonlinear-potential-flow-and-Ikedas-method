@@ -13,7 +13,7 @@ def show():
                    'B_W+B_F',
                    'L_pp',
                    'beam',
-                   'T',
+                   'T_s',
                    'sigma',
     #               'OG/d',
                    'R',
