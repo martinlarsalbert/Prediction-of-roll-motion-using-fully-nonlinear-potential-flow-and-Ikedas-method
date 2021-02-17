@@ -28,7 +28,7 @@ def show():
         'B_E_star_hat':r'$\hat{B_E}^*$',
         'L_pp':r'$L_{pp}$',
         'beam':r'$beam$',
-        'T':r'$T_s$',
+        'T_s':r'$T_s$',
         'sigma':r'$\sigma$',
     #    'OG/d':r'$\frac{OG}{d}$',
         'R':r'$R_b$',
