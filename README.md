@@ -1,6 +1,8 @@
-Prediction-of-roll-damping-using-fully-nonlinear-potential-flow-and-Ikedas-method
+Prediction-of-roll-motion-using-fully-nonlinear-potential-flow-and-Ikedas-method
 ==============================
-The repository was used for the work conducted for the paper: "Prediction of roll damping using fully nonlinear potential flow and Ikeda's method". The LaTeX for the actual paper is however [here](https://github.com/martinlarsalbert/inviscid_CFD_-roll_decay)
+The repository was used for the work conducted for the paper: "Prediction of roll motion using fully nonlinear potential flow and Ikeda's method". The LaTeX for the actual paper is however [here](https://github.com/martinlarsalbert/inviscid_CFD_-roll_decay)
+
+
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/martinlarsalbert/Prediction-of-roll-motion-using-fully-nonlinear-potential-flow-and-Ikedas-method/HEAD)
 
@@ -17,24 +19,19 @@ Use a pre-commit filter called [nbstripout](https://github.com/kynan/nbstripout)
 Project Organization
 ------------
 
-    ├── LICENSE
-    ├── Makefile           <- Makefile with commands like `make data` or `make train`
-    ├── README.md          <- The top-level README for developers using this project.
     ├── data
     │   ├── external       <- Data from third party sources.
     │   ├── interim        <- Intermediate data that has been transformed.
     │   ├── processed      <- The final, canonical data sets for modeling.
     │   └── raw            <- The original, immutable data dump.
     │
-    ├── docs               <- A default Sphinx project; see sphinx-doc.org for details
-    │
     ├── models             <- Trained and serialized models, model predictions, or model summaries
     │
-    ├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
-    │                         the creator's initials, and a short `-` delimited description, e.g.
-    │                         `1.0-jqp-initial-data-exploration`.
+    ├── notebooks          <- Jupyter notebooks. This is where the actual research has been conducted, data exploration, experiments etc.  
+    │                                These notebooks are referred to in the [loogbook](notebooks/logbook.ipynb)
+    │                                Naming convention is a number (for ordering).
+    │                         
     │
-    ├── references         <- Data dictionaries, manuals, and all other explanatory materials.
     │
     ├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
     │   └── figures        <- Generated graphics and figures to be used in reporting
