@@ -9,6 +9,7 @@ dependencies:
   - scipy
   - sympy
   - joblib
+  - seaborn
   
   - pip:
     - rolldecay-estimators

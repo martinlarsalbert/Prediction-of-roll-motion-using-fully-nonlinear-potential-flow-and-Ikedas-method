@@ -15,8 +15,7 @@ file_paths = [
 #    '../../data/external/kvlcc2_rolldecay_15-5kn_const_large_ikeda',
     '../../data/external/kvlcc2_rolldecay_15-5kn_ikeda_dev',
 ]
-df_parameters = pd.DataFrame()
-df_parameters =  helpers.load_parameters(file_path=file_paths)
+df_parameters = pd.read_csv('../../data/processed/roll decay KVLCC2/fnpf_parameters.csv', index_col=0)
 
 mask_0 = (df_parameters['vm_s'].round(5) == 0)
 df_parameters.loc[mask_0,'id'] = 21338  # MDL DB run id
