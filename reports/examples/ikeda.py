@@ -37,10 +37,12 @@ def get_estimator(id,ikeda_name):
 
 def show(amplitudes, amplitudes_motions, models_mdl, ylim=None):
     id = 21338
-    ikeda_names = ['ikeda_r_s','ikeda_C_r',]
+    #ikeda_names = ['ikeda_r_s','ikeda_C_r',]
+    ikeda_names = ['ikeda_r','ikeda_C_r',]
+    
     paper_ikeda_names = {
         'ikeda_C_r' : r'Decision tree $C_r$',
-        'ikeda_r_s' : r'Regular implementation',
+        'ikeda_r' : r'Regular implementation',
     }
     fig,axes = plt.subplots(ncols=len(ikeda_names))
     for ax,ikeda_name in zip(axes,ikeda_names):

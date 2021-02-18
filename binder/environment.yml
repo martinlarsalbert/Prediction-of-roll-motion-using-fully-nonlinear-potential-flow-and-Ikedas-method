@@ -12,6 +12,6 @@ dependencies:
   - seaborn
   
   - pip:
-    - rolldecay-estimators
+    - rolldecay-estimators==0.5.6
     - pyscores2
     - shipflowmotionshelpers
