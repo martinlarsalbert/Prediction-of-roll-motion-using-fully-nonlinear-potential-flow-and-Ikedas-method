@@ -12,7 +12,7 @@ def show():
     fig,ax = plt.subplots()
     fig.set_size_inches(15,10)
     #with plt.style.context('paper'):
-    tree.plot_tree(c_r_tree, ax=ax, feature_names=[r'$\sigma$', r'$a_3$'], rounded=True, fontsize=20);
+    tree.plot_tree(c_r_tree, ax=ax, feature_names=[r'$\sigma$', r'$a_1$', r'$a_3$'], rounded=True, fontsize=20);
 
 def show_KVLCC2_C_r_prediction():
 
@@ -26,7 +26,7 @@ def show_KVLCC2_C_r_prediction():
                                               H0=df_kvlcc2_.H0, d=df_kvlcc2_['T'], OG=OG, 
                           R=df_kvlcc2_.R, ra=ra)
 
-    good_feature_names=['sigma', 'a_3']
+    good_feature_names=['sigma', 'a_1', 'a_3']
     c_r_tree = joblib.load('../../models/C_r_tree.pkl')
     df_kvlcc2['C_r'] = c_r_tree.predict(X=df_kvlcc2[good_feature_names])
 
