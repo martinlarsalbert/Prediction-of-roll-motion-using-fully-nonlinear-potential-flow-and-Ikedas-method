@@ -52,6 +52,6 @@ def show():
         'draught' : r'$[m]$',        
     }
 
-
+    table_parameters = table_parameters.round(decimals=3)
     lt = LateXTable(table_parameters, units=units, rename=rename, caption='KVLCC2 model data', label='kvlcc2_model_data')
     return lt
