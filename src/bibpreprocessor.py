@@ -12,6 +12,7 @@ from nbconvert.preprocessors import *
 import re
 import os
 import sys
+from copy import deepcopy
 
 class NoAuthorError(Exception): pass
 
@@ -30,7 +31,9 @@ def get_path(d:dict, path:list, default=None):
 
 class BibTexPreprocessor(Preprocessor):
 
-    def create_bibentry(self, refkey, reference):
+    def create_bibentry(self, refkey, reference, doi_title=True):
+        
+        reference = deepcopy(reference)
         
         entry = "\n"
         entry += "@article{" + refkey + ",\n"
@@ -54,6 +57,10 @@ class BibTexPreprocessor(Preprocessor):
             'url':["URL"],
 
         }
+
+        if doi_title:
+            if 'DOI' in reference:
+                reference['title'] = '%s (doi:%s)' % (reference['title'],reference['DOI'])
         
         first = True
         for item, path in items.items():
