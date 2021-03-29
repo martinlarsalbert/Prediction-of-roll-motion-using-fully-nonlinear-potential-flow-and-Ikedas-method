@@ -25,6 +25,8 @@ def show():
 
     model_mdl = joblib.load('../../models/KVLCC2_21340.pkl')
 
+    sigma_limit = 0.99  # Using this limit to get realistic values for the visualization
+
     ## Amplitude variation 1
     phi_as = np.deg2rad(np.linspace(0,phi_a_deg,N))
     ikeda_estimator0 = ikeda_classes.Ikeda.load_scoresII(V=np.min(V), 
@@ -32,7 +34,7 @@ def show():
                                                         fi_a=phi_as, 
                                                         indata=indata, 
                                                         output_file=output_file, 
-                                    scale_factor=scale_factor, BKL=0, BKB=0, kg=kg)
+                                    scale_factor=scale_factor, BKL=0, BKB=0, kg=kg, sigma_limit = sigma_limit)
 
     results0 = ikeda_estimator0.calculate()
     results0['phi_a'] = phi_as
@@ -44,7 +46,7 @@ def show():
                                                         fi_a=phi_a, 
                                                         indata=indata, 
                                                         output_file=output_file, 
-                                    scale_factor=scale_factor, BKL=0, BKB=0, kg=kg)
+                                    scale_factor=scale_factor, BKL=0, BKB=0, kg=kg, sigma_limit = sigma_limit)
 
     results = ikeda_estimator.calculate()
     results['V'] = V
@@ -58,7 +60,7 @@ def show():
                                                         fi_a=phi_as, 
                                                         indata=indata, 
                                                         output_file=output_file, 
-                                    scale_factor=scale_factor, BKL=0, BKB=0, kg=kg)
+                                    scale_factor=scale_factor, BKL=0, BKB=0, kg=kg, sigma_limit = sigma_limit)
 
     results2 = ikeda_estimator2.calculate()
     results2['phi_a'] = phi_as
@@ -66,7 +68,7 @@ def show():
 
     
     fig,axes=plt.subplots(ncols=3)
-    fig.set_size_inches(10, 6)
+    #fig.set_size_inches(10, 6)
     rename = {
         'B_W_hat':r'$\hat{B_W}$',
         'B_F_hat':r'$\hat{B_F}$',

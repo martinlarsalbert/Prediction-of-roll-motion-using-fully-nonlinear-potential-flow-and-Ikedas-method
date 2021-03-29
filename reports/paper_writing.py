@@ -159,7 +159,7 @@ def _get_symbols(equation_dict:dict):
 
 def _latex_unit(unit:str):
     latex_unit = unit.replace('**', r'^')
-    #latex_unit=latex_unit.replace('*',r'\cdot ')
+    latex_unit=latex_unit.replace('*',r'\cdot ')
     latex_unit='%s'%latex_unit
     return latex_unit
 

@@ -31,8 +31,18 @@ def show_KVLCC2_C_r_prediction():
     df_kvlcc2['C_r'] = c_r_tree.predict(X=df_kvlcc2[good_feature_names])
 
     fig,ax=plt.subplots()
-    df_kvlcc2.plot(y='C_r', style='.-', label='decision tree', ax=ax)
-    df_kvlcc2_.plot(y='C_r', style='.-', label='ikeda', ax=ax)
+    df_kvlcc2.plot(y='C_r', style='g.-', label='decision tree', ax=ax)
+    df_kvlcc2_.plot(y='C_r', style='r.-', label='ikeda', ax=ax)
     ax.set_ylabel(r'$C_r$')
     ax.set_xlabel(r'station')
     ax.grid(True)
+    ax.legend(loc='upper left')
+
+    df_kvlcc2['R/b'] = df_kvlcc2['R']/df_kvlcc2['beam']
+    
+    ax_R_b = ax.twinx()
+    ax_R_b.tick_params(axis='y', labelcolor='blue')
+    df_kvlcc2.plot(y='R/b', ax=ax_R_b, style='--', label=r'$\frac{R_b}{b}$ $[-]$', color='blue')
+    ax_R_b.set_ylim(0,0.3)
+    ax_R_b.set_ylabel(r'$\frac{R_b}{b}$ $[-]$', color='blue')
+    ax_R_b.legend(loc='upper right')

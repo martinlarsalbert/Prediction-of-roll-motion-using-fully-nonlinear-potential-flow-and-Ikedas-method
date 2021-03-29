@@ -35,23 +35,23 @@ def get_estimator(id,ikeda_name):
     ikeda = joblib.load('../../models/%s' % file_name)
     return ikeda
 
-def show(amplitudes, amplitudes_motions, models_mdl, ylim=None):
-    id = 21338
-    #ikeda_names = ['ikeda_r_s','ikeda_C_r',]
-    ikeda_names = ['ikeda_r','ikeda_C_r',]
-    
+def show(amplitudes, amplitudes_motions, models_mdl, ylim=None, ikeda_names = ['ikeda_r','ikeda_C_r',], id = 21338):
+        
     paper_ikeda_names = {
         'ikeda_C_r' : r'Decision tree $C_r$',
         'ikeda_r' : r'Regular implementation',
     }
     fig,axes = plt.subplots(ncols=len(ikeda_names))
+    if len(ikeda_names) < 2:
+        axes=[axes]
+
     for ax,ikeda_name in zip(axes,ikeda_names):
 
         row = mdl_results.df_rolldecays.loc[id]
         ikeda = get_estimator(id=id, ikeda_name=ikeda_name)
         model = models_mdl[id]
         df_amplitudes = amplitudes[id]
-        #phi_as = np.linspace(df_amplitudes['phi_a'].min(), df_amplitudes['phi_a'].max(), 100)
+
         phi_as = df_amplitudes['phi_a']
 
         df = ikeda.calculate(w=model.results['omega0'], fi_a=phi_as)
@@ -72,6 +72,8 @@ def show(amplitudes, amplitudes_motions, models_mdl, ylim=None):
         if not ylim is None:
             ax.set_ylim(ylim)
     
-    axes[0].get_legend().set_visible(False)
+    if len(axes) > 1:
+        axes[0].get_legend().set_visible(False)
+    
     axes[0].set_ylabel(r'$B$ $[Nm \cdot s]$')
     
