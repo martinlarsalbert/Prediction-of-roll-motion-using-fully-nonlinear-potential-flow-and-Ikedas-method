@@ -7,9 +7,57 @@ from reports.examples.mdl import plot_amplitudes
 import src.visualization.visualize as visualize 
 import reports.mdl_results as mdl_results
 import src.helpers
+from reports.examples.ikeda import plot_ikeda
 
 best_motions_ikeda = 'kvlcc2_rolldecay_15-5kn_ikeda_dev'
 invicid_motions = 'kvlcc2_rolldecay_15-5kn_const_large2'
+
+
+def show(amplitudes, amplitudes_motions, models_mdl, ylim=None, show_FNPF=False):
+
+    id = 21340
+    key = best_motions_ikeda
+    df_amplitudes_motions = amplitudes_motions[key].copy()
+
+    row = mdl_results.df_rolldecays.loc[id]
+    ikeda_name = 'ikeda_C_r'
+    file_name = '%s_%s.pkl' % (id,ikeda_name)
+    ikeda = joblib.load('../../models/%s' % file_name)
+    model = models_mdl[id]
+    df_amplitudes = amplitudes[id]
+    phi_as = df_amplitudes_motions['phi_a']
+
+    df = ikeda.calculate(w=model.results['omega0'], fi_a=phi_as)
+    df['phi_a'] = phi_as
+    df.set_index('phi_a', inplace=True)
+
+    results = src.helpers.unhat(df=df, 
+                                Disp=ikeda.volume, 
+                                beam=ikeda.beam, 
+                                g=ikeda.g, 
+                                rho=ikeda.rho)
+
+    ## Replacing the wave damping from motions
+    results['B_W'] = df_amplitudes_motions['B_W_model'].values
+    results_ = results.copy()
+    results_['phi_a_deg'] = np.rad2deg(results_.index)
+    results_.set_index('phi_a_deg', inplace=True)
+    fig,ax=plt.subplots()
+    plot_ikeda(df_amplitudes=amplitudes[id], results=results_, paper_name=row.paper_name, ax=ax)
+    
+    if show_FNPF:
+        plot_amplitudes(df_amplitudes=df_amplitudes_motions, source='FNPF', paper_name=row.paper_name,
+                        ax=ax, color='red')
+
+    ax.legend()
+    if not ylim is None:
+        ax.set_ylim(ylim)
+
+    ax.set_ylabel(r'$B$ $[Nm \cdot s]$')
+    ax.set_xlabel(r'$\phi_a$ $[deg]$')
+
+    handles, labels = ax.get_legend_handles_labels()
+    ax.legend(handles=handles[0:1], labels=labels[0:1], loc='upper left')
 
 def show_frequency(df_results, amplitudes, amplitudes_motions, ylim=None):
     

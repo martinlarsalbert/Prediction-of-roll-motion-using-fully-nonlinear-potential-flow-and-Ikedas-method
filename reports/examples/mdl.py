@@ -8,6 +8,7 @@ from rolldecayestimators import logarithmic_decrement
 from rolldecayestimators import lambdas
 from sklearn.pipeline import Pipeline
 from rolldecayestimators import measure
+from rolldecayestimators.direct_estimator_cubic import EstimatorQuadraticB, EstimatorCubic, EstimatorQuadratic
 
 def get_models_zero_speed():
     mask = mdl_results.df_rolldecays['ship_speed'] == 0
@@ -88,10 +89,19 @@ def analyze_amplitude(model):
     df_amplitudes['phi_a'] = logarithmic_decrement.estimate_amplitude(phi=df_amplitudes['phi'])
     
     omega0 = results['omega0']
-    df_amplitudes['B_model'] = lambdas.B_e_lambda_cubic(B_1=results['B_1'], B_2=results['B_2'], 
+    
+    if type(model) is EstimatorCubic:    
+        df_amplitudes['B_model'] = lambdas.B_e_lambda_cubic(B_1=results['B_1'], B_2=results['B_2'], 
                                                     B_3=results['B_3'],
                             omega0=omega0, phi_a=df_amplitudes['phi_a'])
+    
+    elif (type(model) is EstimatorQuadraticB) or (type(model) is EstimatorQuadratic):
+        df_amplitudes['B_model'] = lambdas.B_e_lambda(B_1=results['B_1'], B_2=results['B_2'], 
+                            omega0=omega0, phi_a=df_amplitudes['phi_a'])
 
+    else:
+        raise ValueError('Unknown model class:%s' % model.__class__)
+    
     df_amplitudes['B_model'] = df_amplitudes['B_model'].astype(float)
 
     t = np.array(df_amplitudes.index)

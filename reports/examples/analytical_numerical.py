@@ -30,7 +30,7 @@ def show(omega0_lambda, accelaration_lambda):
             self.parameters = {
                 'B_1A':B_1A, 
                 'B_2A':B_2A, 
-                'B_3A':B_3A, 
+                #'B_3A':B_3A, 
                 'C_1A':C_1A, 
                 'C_3A':C_3A, 
                 'C_5A':C_5A}

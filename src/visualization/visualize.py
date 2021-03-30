@@ -24,7 +24,7 @@ def plot_area(results,interesting_ = ['B_W_hat','B_F_hat','B_E_hat','B_L_hat'], 
         fig,ax=plt.subplots()
     
     results.plot.area(y=interesting_, ax=ax)
-
+    
     ## Fancy annotation:
     xs = []
     for component_ in interesting_:

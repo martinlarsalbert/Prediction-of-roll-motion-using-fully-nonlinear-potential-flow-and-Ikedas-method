@@ -100,8 +100,17 @@ def get_estimator_variation(estimator, results, meta_data):
 def get_variation(X_amplitudes, results, meta_data):
     
     phi_a=X_amplitudes['phi_a']
-    B_e = lambdas.B_e_lambda_cubic(B_1=results['B_1'], B_2=results['B_2'], B_3=results['B_3'], 
+    
+    if 'B_3' in results:
+    
+        B_e = lambdas.B_e_lambda_cubic(B_1=results['B_1'], B_2=results['B_2'], B_3=results['B_3'], 
                                    omega0=results['omega0'], phi_a=phi_a)
+    elif 'B_2' in results:
+        B_e = lambdas.B_e_lambda_cubic(B_1=results['B_1'], B_2=results['B_2'], B_3=0, 
+                                   omega0=results['omega0'], phi_a=phi_a)
+    else:
+        B_e = results['B_1']
+    
     B_e_hat = lambdas.B_hat_lambda(B=B_e, Disp=meta_data['Volume'], beam=meta_data['beam'], g=meta_data['g'], rho=meta_data['rho'])
     X_amplitudes['B_e'] = B_e
     X_amplitudes['B_e_hat'] = B_e_hat

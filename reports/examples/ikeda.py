@@ -27,7 +27,6 @@ def plot_ikeda(df_amplitudes,results, paper_name, ax=None):
                     ax=ax, color='black')
     ax.set_xlabel(r'$\phi_a$ $[deg]$')
     #ax.set_ylim(y_lim_motions)
-    ax.legend()
 
 
 def get_estimator(id,ikeda_name):
