@@ -111,7 +111,7 @@ def get_variation(X_amplitudes, results, meta_data):
     else:
         B_e = results['B_1']
     
-    B_e_hat = lambdas.B_hat_lambda(B=B_e, Disp=meta_data['Volume'], beam=meta_data['beam'], g=meta_data['g'], rho=meta_data['rho'])
+    B_e_hat = lambdas.B_hat_lambda(B=B_e, Disp=meta_data['Volume'], b=meta_data['beam'], g=meta_data['g'], rho=meta_data['rho'])
     X_amplitudes['B_e'] = B_e
     X_amplitudes['B_e_hat'] = B_e_hat
     X_amplitudes['B_e'] = X_amplitudes['B_e'].astype(float)
@@ -130,7 +130,7 @@ def get_data_variation(estimator, results, meta_data):
     zeta = X_amplitudes['zeta_n']
     X_amplitudes['B']=2*A_44*omega0*zeta
         
-    X_amplitudes['B_hat'] = lambdas.B_hat_lambda(B=X_amplitudes['B'], Disp=meta_data['Volume'], beam=meta_data['beam'], g=meta_data['g'], rho=meta_data['rho'])
+    X_amplitudes['B_hat'] = lambdas.B_hat_lambda(B=X_amplitudes['B'], Disp=meta_data['Volume'], b=meta_data['beam'], g=meta_data['g'], rho=meta_data['rho'])
     return X_amplitudes
 
 def unhat(df:pd.DataFrame, Disp:float, beam:float, g:float, rho:float, hat_suffix = '_hat')-> pd.DataFrame:
@@ -163,7 +163,7 @@ def unhat(df:pd.DataFrame, Disp:float, beam:float, g:float, rho:float, hat_suffi
     unhat_keys = [key.replace(hat_suffix,'') for key in hat_keys]
     for hat_key, unhat_key in zip(hat_keys,unhat_keys):
 
-        new_df[unhat_key] = lambdas.B_from_hat_lambda(B_44_hat=df[hat_key], Disp=Disp, beam=beam, g=g, rho=rho)
+        new_df[unhat_key] = lambdas.B_from_hat_lambda(B_44_hat=df[hat_key], Disp=Disp, b=beam, g=g, rho=rho)
 
     return new_df
 
@@ -174,7 +174,7 @@ def hatify(df:pd.DataFrame, Disp:float, beam:float, g:float, rho:float)-> pd.Dat
     for key in df:
         
         hat_key = '%s_hat' % key
-        new_df[hat_key] = lambdas.B_to_hat_lambda(B=df[key], Disp=Disp, beam=beam, g=g, rho=rho)
+        new_df[hat_key] = lambdas.B_to_hat_lambda(B=df[key], Disp=Disp, b=beam, g=g, rho=rho)
 
     return new_df
 
@@ -213,7 +213,7 @@ def calculate_B_hat(parameters, g=9.81, rho=1000, **kwargs):
     OG=parameters['OG/d']*parameters.d
     R = parameters.R 
         
-    w = lambdas.omega_from_hat(beam=parameters.B, g=g, omega_hat=parameters.w_hat)
+    w = lambdas.omega_from_hat(b=parameters.B, g=g, omega_hat=parameters.w_hat)
     #B_E0_s = eddy_sections(bwl=parameters.B, a_1=a_1, a_3=a_3, sigma=sigma_s, H0=H, Ts=parameters.d,
     #         OG=OG, R=R, wE=w, fi_a=parameters.phi_a, ra=rho)
     #B_E0 = B_E0_s*parameters.L
