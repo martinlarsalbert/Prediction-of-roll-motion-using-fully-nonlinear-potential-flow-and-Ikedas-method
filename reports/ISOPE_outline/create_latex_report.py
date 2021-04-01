@@ -10,5 +10,5 @@ build_directory = os.path.join(reports.path,'ISOPE')
 if not os.path.exists(build_directory):
     os.mkdir(build_directory)
 
-convert_notebook_to_latex(notebook_path=notebook_path, build_directory=build_directory, save_main=False, skip_figures=True)
+convert_notebook_to_latex(notebook_path=notebook_path, build_directory=build_directory, save_main=False, skip_figures=False)
 

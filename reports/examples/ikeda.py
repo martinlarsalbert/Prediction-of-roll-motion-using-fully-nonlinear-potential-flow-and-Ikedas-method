@@ -67,12 +67,17 @@ def show(amplitudes, amplitudes_motions, models_mdl, ylim=None, ikeda_names = ['
     
         #ax.set_title(paper_ikeda_names[ikeda_name])
         ax.legend(loc='upper left')
-        
+        ax.get_legend().set_visible(False)
+
         if not ylim is None:
             ax.set_ylim(ylim)
     
     if len(axes) > 1:
-        axes[0].get_legend().set_visible(False)
+        axes[0].set_ylabel(r'$B$ $[Nm \cdot s]$')
+
+
+    handles, labels = axes[0].get_legend_handles_labels()
+    axes[0].legend(handles=handles[0:1], labels=labels[0:1], loc='upper left')
     
-    axes[0].set_ylabel(r'$B$ $[Nm \cdot s]$')
+    
     
