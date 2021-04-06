@@ -21,7 +21,7 @@ analytical_solution_B_1 = sp.Eq(symbols.phi,
                                 sp.simplify(sp.solve(eqs,symbols.zeta,symbols.phi)[0][1]))
 analytical_lambda = lambdify(sp.solve(analytical_solution_B_1,symbols.phi)[0])
 
-def show(omega0_lambda, accelaration_lambda):
+def show(omega0_lambda, accelaration_lambda, plot=True, dt=0.01):
     
 
     class RollDecayStateSpace():
@@ -61,8 +61,7 @@ def show(omega0_lambda, accelaration_lambda):
     B_1A = B_1/A_44
     C_1A = C_1/A_44
     omega0=omega0_lambda(A_44=A_44, C_1=C_1)
-
-    t = np.linspace(0,10,1000)
+    t = np.arange(0,10,dt)    
     phi_0=np.deg2rad(10)
     phi_01d=0
 
@@ -75,12 +74,14 @@ def show(omega0_lambda, accelaration_lambda):
     phi_analytical = analytical_lambda(A_44=A_44, B_1=B_1, omega0=omega0, phi_0=phi_0, phi_01d=phi_01d, 
                                       t=t)
     
-    fig,ax=plt.subplots()   
-    ax.plot(t, phi_analytical, '-', label='analytical')
+    if plot:
+        fig,ax=plt.subplots()   
+        ax.plot(t, phi_analytical, '-', label='analytical')
+
+        df_state_space.plot(y='phi', style='--', ax=ax, label='numerical')
+        ax.set_ylabel(r'$\phi$ $[rad]$')
+        ax.set_xlabel(r'time $[s]$')
+        ax.grid(True)
+        ax.legend()
     
-    df_state_space.plot(y='phi', style='--', ax=ax, label='numerical')
-    ax.set_ylabel(r'$\phi$ $[rad]$')
-    ax.set_xlabel(r'time $[s]$')
-    ax.grid(True)
-    ax.legend()
-    
+    return df_state_space
