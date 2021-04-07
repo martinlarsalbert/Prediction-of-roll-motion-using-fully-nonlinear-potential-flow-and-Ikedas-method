@@ -1,6 +1,7 @@
 import pandas as pd
 import joblib
 from collections import OrderedDict
+import matplotlib.pyplot as plt
 
 import shipflowmotionshelpers.shipflowmotionshelpers as helpers
 from rolldecayestimators import lambdas
@@ -55,8 +56,27 @@ def show(amplitudes, df_results, ylim=None):
     
     index = ['kvlcc2_rolldecay_0kn','kvlcc2_rolldecay_15-5kn_ikeda_dev']
     
-    reports.examples.mdl.show(amplitudes=amplitudes, df_results=df_results.loc[index], ylim=ylim, source = 'FNPF', prefix='B_W')
+    df_results=df_results.loc[index]
+    source = 'FNPF'
+    prefix='B_W'
 
+    ## Plotting:
+    fig,ax=plt.subplots()
+    for id,row in df_results.iterrows(): 
+        df_amplitudes = amplitudes[id].copy()
+        reports.examples.mdl.plot_amplitudes(df_amplitudes=df_amplitudes, paper_name = row.paper_name, ax=ax, source=source, prefix=prefix)
+
+    ax.set_ylabel(r'$%s$ $[Nm \cdot s]$' % prefix)    
+    ax.set_xlabel(r'$\phi_a$ $[deg]$')
+
+    y_lim_motions = list(ax.get_ylim())
+    y_lim_motions[0]=0
+    y_lim_motions[1]*=1.05
+    ax.set_ylim(y_lim_motions)
+    ax.grid(True)
+
+    if not ylim is None:
+        ax.set_ylim(ylim)
 
 def analyze_amplitudes(models):
     

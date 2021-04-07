@@ -140,7 +140,7 @@ def plot_amplitudes(df_amplitudes, paper_name, source='model test', prefix='B', 
     df_amplitudes.plot(x=pretty, y='%s_model' % prefix, label='_nolegend_', color=color, style='-', ax=ax)
     ax.grid(True)
 
-def show(amplitudes, df_results, ylim=None, source='model test', prefix='B'):
+def show(amplitudes, df_results, ylim=None, source='model test'):
     
     ## Plotting:
     prefixes = [prefix,'omega0']
