@@ -143,8 +143,8 @@ def plot_amplitudes(df_amplitudes, paper_name, source='model test', prefix='B', 
 def show(amplitudes, df_results, ylim=None, source='model test'):
     
     ## Plotting:
-    prefixes = [prefix,'omega0']
-    ylabels = [r'$%s$ $[Nm \cdot s]$' % prefix,
+    prefixes = ['B','omega0']
+    ylabels = [r'$B$ $[Nm \cdot s]$',
                r'$\omega_0$ $[\frac{rad}{s}]$',
     ]
     

@@ -152,6 +152,9 @@ def _get_symbols(equation_dict:dict):
 
     symbols = {}
     for name,eq in equation_dict.items():
+        if isinstance(eq,str):
+            continue
+        
         free_symbols = {symbol.name:symbol for symbol in eq.free_symbols}
         symbols.update(free_symbols)
     
