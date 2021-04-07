@@ -423,6 +423,18 @@ class Equation(Math):
         self.label = label
         self.expression = data
 
+        if isinstance(data,str):
+            data_text = data
+        else:            
+            data_text = self.eq_to_string(data=data, max_length=max_length, subs=subs)
+
+        super().__init__(data=data_text, url=url, filename=filename, metadata=metadata)
+
+        global equation_dict
+        equation_dict[label] = self.expression  # Add this equation to the global list (used for nomenclature)
+
+    def eq_to_string(self, data, max_length=150, subs=True):
+
         if subs:
             data = data.subs(equations.nicer_LaTeX)
 
@@ -451,10 +463,8 @@ class Equation(Math):
         else:
             data_text_ = data_text
 
-        super().__init__(data=data_text_, url=url, filename=filename, metadata=metadata)
+        return data_text_
 
-        global equation_dict
-        equation_dict[label] = self.expression  # Add this equation to the global list (used for nomenclature)
 
     
     def _repr_latex_(self):

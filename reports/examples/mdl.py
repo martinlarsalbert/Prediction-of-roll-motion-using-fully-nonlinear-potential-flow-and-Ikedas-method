@@ -78,10 +78,13 @@ def analyze_amplitude(model):
     
     #df_max = logarithmic_decrement.find_peaks(model.X)
     df_max = measure.get_peaks(model.X)
+    df_max_model = measure.get_peaks(model.predict(model.X))
     
     results = model.results
     ## Logartithmic decrement
     df_amplitudes = df_max.copy()
+    df_amplitudes_model = df_max_model.copy()
+    
     df_decrements = logarithmic_decrement.calculate_decrements(df_amplitudes=df_amplitudes)
     df_amplitudes['zeta_n'] = logarithmic_decrement.calculate_zeta(df_decrements=df_decrements)
     df_amplitudes['B'] = logarithmic_decrement.calculate_B(zeta_n=df_amplitudes['zeta_n'], 
@@ -103,16 +106,22 @@ def analyze_amplitude(model):
         raise ValueError('Unknown model class:%s' % model.__class__)
     
     df_amplitudes['B_model'] = df_amplitudes['B_model'].astype(float)
-
+    
+    
     t = np.array(df_amplitudes.index)
     df_amplitudes['T'] = np.roll(t,-2) - t
     df_amplitudes['omega0'] = 2*np.pi/df_amplitudes['T']
     
+    t = np.array(df_amplitudes_model.index)
+    df_amplitudes_model['T'] = np.roll(t,-2) - t
+    df_amplitudes_model['omega0'] = 2*np.pi/df_amplitudes_model['T']
+    df_amplitudes['omega0_model'] = np.array(df_amplitudes_model['omega0'].astype(float))
+
     df_amplitudes.dropna(inplace=True, subset=['B'])
 
     return df_amplitudes
 
-def plot_amplitudes(df_amplitudes, paper_name, source='model test', prefix='B', ax=None, **kwargs):
+def plot_amplitudes(df_amplitudes, paper_name, source='model test', prefix='B', ax=None, model=True, **kwargs):
     
     if ax is None:
         fig,ax=plt.subplots()
@@ -134,20 +143,34 @@ def plot_amplitudes(df_amplitudes, paper_name, source='model test', prefix='B', 
 def show(amplitudes, df_results, ylim=None, source='model test', prefix='B'):
     
     ## Plotting:
-    fig,ax=plt.subplots()
-    for id,row in df_results.iterrows(): 
-        df_amplitudes = amplitudes[id].copy()
-        plot_amplitudes(df_amplitudes=df_amplitudes, paper_name = row.paper_name, ax=ax, source=source, prefix=prefix)
+    prefixes = [prefix,'omega0']
+    ylabels = [r'$%s$ $[Nm \cdot s]$' % prefix,
+               r'$\omega_0$ $[\frac{rad}{s}]$',
+    ]
+    
+    fig,axes=plt.subplots(nrows=len(prefixes))
 
-    ax.set_ylabel(r'$%s$ $[Nm \cdot s]$' % prefix)    
-    ax.set_xlabel(r'$\phi_a$ $[deg]$')
+    for ax, prefix, ylabel in zip(axes,prefixes, ylabels):
+        
+        for id,row in df_results.iterrows(): 
+            df_amplitudes = amplitudes[id].copy()
+            plot_amplitudes(df_amplitudes=df_amplitudes, paper_name = row.paper_name, ax=ax, source=source, prefix=prefix)
 
-    y_lim_motions = list(ax.get_ylim())
-    y_lim_motions[0]=0
-    y_lim_motions[1]*=1.05
-    ax.set_ylim(y_lim_motions)
+        ax.set_ylabel(ylabel)    
+        ax.set_xlabel(r'$\phi_a$ $[deg]$')
+        ax.grid(True)
+    
+    ax = axes[0]
+    ax.get_legend().set_visible(False)
+    #ax.get_xaxis().set_visible(False)
+    ax.set_xlabel('')
+    ax.set_ylim(ylim)
     ax.grid(True)
-
-    if not ylim is None:
-        ax.set_ylim(ylim)
+    ax.set_yticks(np.arange(2,ylim[1],2))
+    #ax.set_xticks([])
+    ax.set_xticklabels([])
+    
+    ax = axes[1]
+    ax.legend(loc='lower right')
+        
     

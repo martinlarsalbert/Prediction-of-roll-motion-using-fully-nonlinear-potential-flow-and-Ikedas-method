@@ -31,14 +31,13 @@ def show():
 
     rename = {
         'LPP' : r'$L_{pp}$',
-        'B' : r'$beam$',
+        'B' : r'$b$',
         'ZCG' : r'$v_{cg}$',
-        'KXX' : r'$k_{xx}$',
+        'KXX' : r'$kg$',
         'S' : r'$S$',
-        'V' : r'$V$',
+        'V' : r'$Disp$',
         'dens' : r'$rho$',
         'draught' : r'$T$',
-        
     }
     
     units = {
@@ -47,7 +46,7 @@ def show():
         'ZCG' : r'$[m]$',
         'KXX' : r'$[m]$',
         'S' : r'$[m^2]$',
-        'V' : r'$\left[\frac{m}{s}\right]$',
+        'V' : r'$[m^3]$',
         'dens' : r'$\left[\frac{kg}{m^3}\right]$',
         'draught' : r'$[m]$',        
     }
