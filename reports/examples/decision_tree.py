@@ -12,9 +12,10 @@ c_r_tree = joblib.load('../../models/C_r_tree.pkl')
 def show():
     
     fig,ax = plt.subplots()
-    fig.set_size_inches(15,10)
+    fig.set_size_inches(8,8)
     #with plt.style.context('paper'):
-    tree.plot_tree(c_r_tree, ax=ax, feature_names=[r'$\sigma$', r'$a_1$', r'$a_3$'], rounded=True, fontsize=20);
+    tree.plot_tree(c_r_tree, ax=ax, feature_names=[r'$\sigma$', r'$a_1$', r'$a_3$'], rounded=True, fontsize=15);
+    
 
 def show_regression():
 

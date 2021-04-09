@@ -33,7 +33,7 @@ def show():
         'LPP' : r'$L_{pp}$',
         'B' : r'$b$',
         'ZCG' : r'$v_{cg}$',
-        'KXX' : r'$kg$',
+        'KXX' : r'$k_{xx}$',
         'S' : r'$S$',
         'V' : r'$Disp$',
         'dens' : r'$rho$',
