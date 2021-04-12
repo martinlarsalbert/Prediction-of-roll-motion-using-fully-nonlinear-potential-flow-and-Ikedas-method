@@ -45,7 +45,7 @@ class BibTexPreprocessor(Preprocessor):
         entry += "  author = {"
         entry += " and ".join([a["family"] + ", " + a["given"] for a in reference["author"]])
         entry += "}, \n"
-
+        
         items = {
             'title' : ['title'],
             'year' : ['issued','year'],
@@ -55,8 +55,14 @@ class BibTexPreprocessor(Preprocessor):
             'issue':["issue"],
             'doi':["DOI"],
             'url':["URL"],
+            'publisher' : ['publisher'],
 
         }
+
+        if not "container-title" in reference:
+            if "publisher" in reference:
+                reference["container-title"]=reference["publisher"]  # dirty fix
+
 
         if doi_title:
             if 'DOI' in reference:
