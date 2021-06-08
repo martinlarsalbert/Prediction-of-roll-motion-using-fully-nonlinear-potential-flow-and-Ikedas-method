@@ -9,11 +9,12 @@ savefig.dpi : 150
 axes.labelsize      : 15  ## fontsize of the x any y labels
 axes.titlesize      : 15  ## fontsize of the axes title
 legend.fontsize     : 12
-xtick.labelsize		: 12
-ytick.labelsize		: 12
+xtick.labelsize		: 15
+ytick.labelsize		: 15
+font.size : 15
 
-lines.linewidth     : 1
-lines.markersize    : 5
+lines.linewidth     : 2
+lines.markersize    : 8
 
 text.usetex: True
 font.family: "serif"
