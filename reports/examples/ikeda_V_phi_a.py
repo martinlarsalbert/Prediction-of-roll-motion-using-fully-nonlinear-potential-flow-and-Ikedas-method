@@ -8,7 +8,7 @@ from pyscores2.indata import Indata
 from pyscores2.output import OutputFile
 import src.visualization.visualize as visualize
 
-def show():
+def show(variations=[1,2,3]):
 
     mdl_meta_data = mdl_results.df_rolldecays.iloc[0]
     scale_factor = mdl_meta_data.scale_factor
@@ -67,7 +67,7 @@ def show():
     results2.set_index('phi_a', inplace=True)
 
     
-    fig,axes=plt.subplots(ncols=3)
+    fig,axes=plt.subplots(ncols=len(variations))
     #fig.set_size_inches(10, 6)
     rename = {
         'B_W_hat':r'$\hat{B_W}$',
@@ -82,29 +82,42 @@ def show():
     ymax=np.max([results0['B_44_hat'].max(),results['B_44_hat'].max(),results2['B_44_hat'].max()])
 
     ax=axes[0]
-    results_ = results0.rename(columns=rename)
-    visualize.plot_area(results_, ax=ax, interesting_=interesting2)
-    ax.set_xlabel(r'$\phi_a$ $[deg]$');
-    ax.set_title(r'$F_n$:%0.2f $[-]$' % np.min(fn))
+    if 1 in variations:
+        results_ = results0.rename(columns=rename)
+        visualize.plot_area(results_, ax=ax, interesting_=interesting2)
+        ax.set_xlabel(r'$\phi_a$ $[deg]$');
+        ax.set_title(r'$F_n$:%0.2f $[-]$' % np.min(fn))
+    else:
+        ax.set_xticks([])  # Removing the ticks this is just an illustration
     ax.set_ylim((0,ymax))
     ax.set_yticks([])  # Removing the ticks this is just an illustration
-
+    
     ax=axes[1]
-    results_ = results.rename(columns=rename)
-    visualize.plot_area(results_, ax=ax, interesting_=interesting2)
-    ax.set_xlabel(r'$F_n$ $[-]$');
-    ax.set_title(r'$\phi_a$:%0.0f $[deg]$' % phi_a_deg)
+    if 2 in variations:
+        
+        results_ = results.rename(columns=rename)
+        visualize.plot_area(results_, ax=ax, interesting_=interesting2)
+        ax.set_xlabel(r'$F_n$ $[-]$');
+        ax.set_title(r'$\phi_a$:%0.0f $[deg]$' % phi_a_deg)
+        ax.get_legend().set_visible(False)
+    else:
+        ax.set_xticks([])  # Removing the ticks this is just an illustration
     ax.set_yticks([])  # Removing the ticks this is just an illustration
     ax.set_ylim((0,ymax))
-    ax.get_legend().set_visible(False)
-
+    
+    if len(axes) < 3:
+        return
+        
     ax=axes[2]
-    results_ = results2.rename(columns=rename)
-    visualize.plot_area(results_, ax=ax, interesting_=interesting2)
-    ax.set_xlabel(r'$\phi_a$ $[deg]$');
-    ax.set_title(r'$F_n$:%0.2f $[-]$' % np.max(fn))
-    ax.get_legend().set_visible(False)
+    if 3 in variations:
+        results_ = results2.rename(columns=rename)
+        visualize.plot_area(results_, ax=ax, interesting_=interesting2)
+        ax.set_xlabel(r'$\phi_a$ $[deg]$');
+        ax.set_title(r'$F_n$:%0.2f $[-]$' % np.max(fn))
+        ax.get_legend().set_visible(False)
+        xlim = ax.get_xlim()
+        ax.set_xlim(xlim[1], xlim[0])  # reversing
+    else:
+        ax.set_xticks([])  # Removing the ticks this is just an illustration
     ax.set_ylim((0,ymax))
-    xlim = ax.get_xlim()
-    ax.set_xlim(xlim[1], xlim[0])  # reversing
     ax.set_yticks([])  # Removing the ticks this is just an illustration

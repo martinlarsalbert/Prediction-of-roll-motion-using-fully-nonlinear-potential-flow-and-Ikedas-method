@@ -92,7 +92,7 @@ def show(amplitudes, amplitudes_motions, models_mdl, ylim=None, show_FNPF=False)
     ax.set_ylabel(r'$B$ $[Nm \cdot s]$')
     ax.set_xlabel(r'$\phi_a$ $[deg]$')
 
-def show_time(models_mdl, models_motions):
+def show_time(models_mdl, models_motions, show_hybrid=True, show_model_test=True):
 
     model_mdl = models_mdl[id]
     row = mdl_results.df_rolldecays.loc[id]
@@ -113,8 +113,12 @@ def show_time(models_mdl, models_motions):
     X_pred_inviscid['phi_deg'] = np.rad2deg(X_pred_inviscid['phi'])
 
     X_pred_inviscid.plot(y='phi_deg', style='-', label='Run %i: FNPF' % row.paper_name, alpha=0.5, ax=ax)
-    X.plot(y='phi_deg', label='Run %i: model test' % row.paper_name, ax=ax)
-    X_pred.plot(y='phi_deg', style='--', label='Run %i: hybrid' % row.paper_name, ax=ax)
+    
+    if show_model_test:
+        X.plot(y='phi_deg', label='Run %i: model test' % row.paper_name, ax=ax)
+    
+    if show_hybrid:
+        X_pred.plot(y='phi_deg', style='--', label='Run %i: hybrid' % row.paper_name, ax=ax)
         
     ax.grid(True)
     ax.set_xlabel(r'Time [s]')

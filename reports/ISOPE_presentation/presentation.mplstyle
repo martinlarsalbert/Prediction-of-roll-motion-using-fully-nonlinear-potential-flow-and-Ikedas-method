@@ -1,7 +1,7 @@
 figure.autolayout : True     ## When True, automatically adjust subplot
                              ## parameters to make the plot fit the figure
                              ## using `tight_layout`
-figure.figsize : 10, 6
+figure.figsize : 10, 5
 
 figure.dpi : 150
 savefig.dpi : 150
