@@ -79,5 +79,5 @@ def show(amplitudes, amplitudes_motions, models_mdl, ylim=None, ikeda_names = ['
     handles, labels = axes[0].get_legend_handles_labels()
     axes[0].legend(handles=handles[0:1], labels=labels[0:1], loc='upper left')
     
-    
+    return axes
     

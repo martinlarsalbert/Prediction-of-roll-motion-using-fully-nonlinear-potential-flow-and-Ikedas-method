@@ -123,6 +123,7 @@ def show_time(models_mdl, models_motions, show_hybrid=True, show_model_test=True
     ax.grid(True)
     ax.set_xlabel(r'Time [s]')
     ax.set_ylabel(r'$\phi$ $[deg]$');
+    return ax
 
 
 #key = 'kvlcc2_rolldecay_0kn'

@@ -69,7 +69,7 @@ def show_regression():
         ax.annotate(row['model'], xy=(row[key],row['C_r']))
 
 
-def show_KVLCC2_C_r_prediction():
+def show_KVLCC2_C_r_prediction(include_Rb=True):
 
 
     df_kvlcc2 = KVLCC2_section_table.get()
@@ -93,11 +93,67 @@ def show_KVLCC2_C_r_prediction():
     ax.grid(True)
     ax.legend(loc='upper left')
 
-    df_kvlcc2['R/b'] = df_kvlcc2['R']/df_kvlcc2['beam']
+    if include_Rb:
+        df_kvlcc2['R/b'] = df_kvlcc2['R']/df_kvlcc2['beam']
+        ax_R_b = ax.twinx()
+        ax_R_b.tick_params(axis='y', labelcolor='blue')
+        df_kvlcc2.plot(y='R/b', ax=ax_R_b, style='--', label=r'$\frac{R_b}{b}$ $[-]$', color='blue')
+        ax_R_b.set_ylim(0,0.3)
+        ax_R_b.set_ylabel(r'$\frac{R_b}{b}$ $[-]$', color='blue')
+        ax_R_b.legend(loc='upper right')
+
+def show_regression2(include_decision_tree=True):
+
+    ikeda_sections_path = r'../../data/processed/ikeda_sections_R.csv'
+    df_ikeda_sections = pd.read_csv(ikeda_sections_path, index_col=0)
+
+    df_ikeda_sections.rename(columns= {
+        'B_e_star_hat':'B_E_star_hat',
+        'd':'T',
+        'w_hat':'omega_hat', 
+        'L':'L_pp', 
+        'B':'beam', 
+        'volume':'Disp', 
+    }, inplace=True)
+
+    df_ikeda_sections.rename(columns={
+        'T':'T_s',
+    }, inplace=True)
+
     
-    ax_R_b = ax.twinx()
-    ax_R_b.tick_params(axis='y', labelcolor='blue')
-    df_kvlcc2.plot(y='R/b', ax=ax_R_b, style='--', label=r'$\frac{R_b}{b}$ $[-]$', color='blue')
-    ax_R_b.set_ylim(0,0.3)
-    ax_R_b.set_ylabel(r'$\frac{R_b}{b}$ $[-]$', color='blue')
-    ax_R_b.legend(loc='upper right')
+    ## Pred tree:
+    X = df_ikeda_sections[['sigma','a_1','a_3']].copy()
+    y_pred = c_r_tree.predict(X)
+    data_pred = df_ikeda_sections.copy()
+    data_pred['C_r'] = y_pred
+
+    ## Pred Ikeda:
+    data2 = df_ikeda_sections.copy()
+    ra = 1000
+    data2['C_r'] = ikeda_naked.calculate_C_r(bwl=data2.beam,
+                          a_1=data2.a_1, a_3=data2.a_3, sigma=data2.sigma, 
+                                              H0=data2.H0, d=data2['T_s'], OG=0, 
+                          R=data2.R, ra=ra)
+
+    ## plot:
+    fig,ax=plt.subplots()
+    
+    for df in [data2,data_pred,df_ikeda_sections]:
+        df[r'$a_3$'] = df['a_3'] 
+
+    
+    
+    
+    #df_ikeda_sections.sort_values(by=key).plot(x=key, y='C_r', style='x', label='experiment', ax=ax)
+    if include_decision_tree:
+        ax.plot(df_ikeda_sections['C_r'], data_pred['C_r'], 'o', label='decision tree')
+    
+    ax.plot(df_ikeda_sections['C_r'], data2['C_r'], 'x', label='ikeda')
+    ax.plot([df_ikeda_sections['C_r'].min(),df_ikeda_sections['C_r'].max()], [df_ikeda_sections['C_r'].min(),df_ikeda_sections['C_r'].max()],'r-')
+    ax.grid(True)
+    ax.set_xlabel(r'$C_r $ (experiment)')
+    ax.set_ylabel(r'$C_r $ (prediction)')
+    ax.legend()
+
+    #for _,row in data_pred.iterrows():
+    #    ax.annotate(row['model'], xy=(row['C_r'],0))

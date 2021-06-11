@@ -112,4 +112,6 @@ def show_time(models_mdl, models_motions):
     ax.grid(True)
     ax.set_xlabel(r'Time [s]')
     ax.set_ylabel(r'$\phi$ $[deg]$');
+
+    return ax
     

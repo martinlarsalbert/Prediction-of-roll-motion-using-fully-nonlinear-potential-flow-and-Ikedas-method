@@ -68,6 +68,8 @@ def show(variations=[1,2,3]):
 
     
     fig,axes=plt.subplots(ncols=len(variations))
+    if len(variations)==1:
+        axes = [axes]
     #fig.set_size_inches(10, 6)
     rename = {
         'B_W_hat':r'$\hat{B_W}$',
@@ -81,29 +83,30 @@ def show(variations=[1,2,3]):
 
     ymax=np.max([results0['B_44_hat'].max(),results['B_44_hat'].max(),results2['B_44_hat'].max()])
 
-    ax=axes[0]
+    counter=0
     if 1 in variations:
+        ax=axes[counter]
+        counter+=1
         results_ = results0.rename(columns=rename)
         visualize.plot_area(results_, ax=ax, interesting_=interesting2)
         ax.set_xlabel(r'$\phi_a$ $[deg]$');
         ax.set_title(r'$F_n$:%0.2f $[-]$' % np.min(fn))
-    else:
-        ax.set_xticks([])  # Removing the ticks this is just an illustration
-    ax.set_ylim((0,ymax))
-    ax.set_yticks([])  # Removing the ticks this is just an illustration
     
-    ax=axes[1]
+        ax.set_ylim((0,ymax))
+        ax.set_yticks([])  # Removing the ticks this is just an illustration
+    
     if 2 in variations:
+        ax=axes[counter]
+        counter+=1
         
         results_ = results.rename(columns=rename)
         visualize.plot_area(results_, ax=ax, interesting_=interesting2)
         ax.set_xlabel(r'$F_n$ $[-]$');
         ax.set_title(r'$\phi_a$:%0.0f $[deg]$' % phi_a_deg)
         ax.get_legend().set_visible(False)
-    else:
-        ax.set_xticks([])  # Removing the ticks this is just an illustration
-    ax.set_yticks([])  # Removing the ticks this is just an illustration
-    ax.set_ylim((0,ymax))
+
+        ax.set_yticks([])  # Removing the ticks this is just an illustration
+        ax.set_ylim((0,ymax))
     
     if len(axes) < 3:
         return
